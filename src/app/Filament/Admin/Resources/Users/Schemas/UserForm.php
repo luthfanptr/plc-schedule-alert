@@ -62,6 +62,19 @@ final class UserForm
                             ->searchable()
                             ->required()
                             ->columnSpanFull(),
+
+                        // Assign Plant
+                        Select::make('plants')
+                            ->label('Plant Access')
+                            ->relationship('plants', 'Name')
+                            ->prefixIcon(Heroicon::BuildingOffice2)
+                            ->multiple()
+                            ->preload()
+                            ->required()
+                            // ->columns(2)
+                            // ->gridDirection('horizontal')
+                            // ->bulkToggleable()
+                            ->columnSpanFull(),
                     ])->columnSpan('4'),
             ])
             ->columns(6);

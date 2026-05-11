@@ -73,4 +73,18 @@ final class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
         ];
     }
+
+    // relasi ke table Plant lewat pivot table UserPlant
+    public function plants(){
+        return $this->belongsToMany(Plant::class, 'user_plants');
+    }
+
+    // relasi ke table PlcNotification
+    public function plc_notifications(){
+        return $this->hasMany(PlcNotification::class, 'updated_by');
+    }
+
+    public function spk_logs(){
+        return $this->hasMany(SpkLog::class, 'updated_by');
+    }
 }
