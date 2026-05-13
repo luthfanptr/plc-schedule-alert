@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // ! ini adalah log history untuk SPK yang statusnya DONE saja
-        Schema::create('spk_logs', function (Blueprint $table) {
+        Schema::create('plc_statuses', function (Blueprint $table) {
             $table->id();
             $table->integer('plc_id');
             $table->string('plant');
@@ -21,11 +20,11 @@ return new class extends Migration
             $table->string('component_name');
             $table->integer('counter');
             $table->integer('limit');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('user_update');
             $table->string('status'); // status mesin
-            $table->enum('spk_status', ['progress', 'done'])->default('null');
-            $table->dateTime('done_at', precision:0);
+            $table->dateTime('plc_date');
+            $table->enum('spk_status', ['progress', 'done'])->nullable()->default(null); // status spk
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
         });
     }
 
@@ -34,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('spk_logs');
+        Schema::dropIfExists('plc_statuses');
     }
 };

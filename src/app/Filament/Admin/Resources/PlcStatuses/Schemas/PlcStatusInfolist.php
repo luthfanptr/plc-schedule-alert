@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PlcData\Schemas;
+namespace App\Filament\Admin\Resources\PlcStatuses\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
-class PlcDataInfolist
+class PlcStatusInfolist
 {
     public static function configure(Schema $schema): Schema
     {
@@ -25,6 +25,11 @@ class PlcDataInfolist
                 TextEntry::make('status'),
                 TextEntry::make('plc_date')
                     ->dateTime(),
+                TextEntry::make('spk_status')
+                    ->placeholder('-'),
+                TextEntry::make('updated_by')
+                    ->numeric()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

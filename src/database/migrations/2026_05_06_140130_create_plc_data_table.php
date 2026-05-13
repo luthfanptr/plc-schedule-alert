@@ -12,18 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('plc_data', function (Blueprint $table) {
+            $table->id();
             $table->integer('plc_id');
-            $table->integer('mem_id');
             $table->string('plant');
             $table->integer('line');
             $table->string('line_name');
-            $table->string('mem_data_name');
-            $table->string('counter_limit');
-            $table->integer('data_value');
+            $table->string('component_name');
+            $table->integer('counter');
+            $table->integer('limit');
+            $table->string('status');
             $table->dateTime('plc_date');
-
-            $table->foreignId('line_id')->constrained('lines')->onDelete('cascade');
-            $table->primary(['plc_id', 'mem_id']);
+            $table->timestamps();
         });
     }
 

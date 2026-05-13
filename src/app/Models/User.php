@@ -79,12 +79,8 @@ final class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Plant::class, 'user_plants');
     }
 
-    // relasi ke table PlcNotification
-    public function plc_notifications(){
-        return $this->hasMany(PlcNotification::class, 'updated_by');
-    }
-
-    public function spk_logs(){
-        return $this->hasMany(SpkLog::class, 'updated_by');
+    // relasi ke table PlcStatus
+    public function plc_statuses(){
+        return $this->hasMany(PlcStatus::class, 'updated_by');
     }
 }

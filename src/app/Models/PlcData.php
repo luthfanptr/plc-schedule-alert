@@ -9,25 +9,26 @@ class PlcData extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
     protected $table = 'plc_data';
     protected $fillable = [
         'plc_id',
-        'mem_id',
         'plant',
         'line',
         'line_name',
-        'mem_data_name',
-        'counter_limit',
-        'data_value',
+        'component_name',
+        'counter',
+        'limit',
+        'status',
         'plc_date',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
         'plc_id' => 'integer',
-        'mem_id' => 'integer',
         'line' => 'integer',
-        'data_value' => 'integer',
+        'counter' => 'integer',
+        'limit' => 'integer',
         'plc_date' => 'datetime',
     ];
 

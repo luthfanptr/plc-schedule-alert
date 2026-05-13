@@ -3,8 +3,12 @@
 namespace App\Filament\Admin\Resources\PlcData\Pages;
 
 use App\Filament\Admin\Resources\PlcData\PlcDataResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Jobs\StatusJob;
+use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\View;
+use Override;
 
 class ListPlcData extends ListRecords
 {
@@ -13,7 +17,15 @@ class ListPlcData extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            //CreateAction::make(),
+            Actions\Action::make('syncPlcData')
+                ->label('Run New Job')
+                ->icon('heroicon-o-arrow-path')
+                ->color('primary')
+                ->action(function () {
+                    // Cukup kirim ke queue, prosesnya akan dikerjakan di background
+                    StatusJob::dispatch();
+                }),
+           Actions\CreateAction::make(),
         ];
     }
 }

@@ -10,6 +10,8 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Line;
+use App\Services\MonitoringService;
+use App\Services\PlcDataService;
 
 class StatusJob implements ShouldQueue
 {
@@ -27,8 +29,9 @@ class StatusJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(PlcDataService $service): void
     {
-        //   
+        // Panggil Service
+        $service->syncPlcData();
     }
 }

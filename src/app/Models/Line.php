@@ -25,8 +25,4 @@ class Line extends Model
     public function plants(){
         return $this->belongsTo(Plant::class);
     }
-
-    public function plc_data(){
-        return $this->hasMany(PlcData::class);
-    }
 }

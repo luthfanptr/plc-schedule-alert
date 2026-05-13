@@ -10,6 +10,7 @@ class ImportMasterSeeder extends Seeder
 {
     /**
      * ! Fungsinya buat auto import data PLANT, LINE, LINE_NAME. jadi gaperlu proses eksekusi query lagi
+     * TODO cari tau cara masukin pake SP nanti
      */
     public function run(): void
     {

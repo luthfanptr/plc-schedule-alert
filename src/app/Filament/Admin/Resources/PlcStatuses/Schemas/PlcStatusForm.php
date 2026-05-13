@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PlcNotifications\Schemas;
+namespace App\Filament\Admin\Resources\PlcStatuses\Schemas;
 
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class PlcNotificationForm
+class PlcStatusForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -31,9 +32,9 @@ class PlcNotificationForm
                     ->numeric(),
                 TextInput::make('status')
                     ->required(),
-                TextInput::make('spk_status')
-                    ->required()
-                    ->default('null'),
+                DateTimePicker::make('plc_date')
+                    ->required(),
+                TextInput::make('spk_status'),
                 TextInput::make('updated_by')
                     ->numeric(),
             ]);

@@ -1,0 +1,12 @@
+.env
+*.mdf
+*.ldf
+*.ndf
+*.sqlite
+*.sqlite-journal
+
+# Dependencies & Logs
+/vendor
+/node_modules
+/storage/logs/*.log
+/storage/framework/cache/*

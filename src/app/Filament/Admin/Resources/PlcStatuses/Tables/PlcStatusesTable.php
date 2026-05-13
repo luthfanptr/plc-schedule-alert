@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Filament\Admin\Resources\SpkLogs\Tables;
+namespace App\Filament\Admin\Resources\PlcStatuses\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class SpkLogsTable
+class PlcStatusesTable
 {
     public static function configure(Table $table): Table
     {
@@ -32,23 +33,30 @@ class SpkLogsTable
                 TextColumn::make('limit')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('status')
+                    ->searchable(),
+                TextColumn::make('plc_date')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('spk_status')
+                    ->searchable(),
                 TextColumn::make('updated_by')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('user_update')
-                    ->searchable(),
-                TextColumn::make('status')
-                    ->searchable(),
-                TextColumn::make('spk_status')
-                    ->searchable(),
-                TextColumn::make('done_at')
+                TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

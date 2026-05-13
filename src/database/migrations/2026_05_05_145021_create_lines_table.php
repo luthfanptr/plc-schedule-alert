@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('lines', function (Blueprint $table) {
             $table->id();
-            $table->string('master_line_id')->unique(); // sync dari MS_LINE.LINE_ID 
+            $table->string('master_line_id')->unique(); // sync dari MS_LINE.LINE_ID | ambil dari seeder
             $table->integer('Line'); // ?GIMANA CARA narik data line dari MS_MC
             $table->string('Name'); // MS_LINE
             $table->foreignId('plant_id')->constrained('plants')->onDelete('cascade');
