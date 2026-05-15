@@ -51,6 +51,7 @@ final class AdminPanelProvider extends PanelProvider
             ])
             ->login()
             ->topbar(false)
+            ->favicon(asset('images/mi.jpg'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->maxContentWidth(Width::Full)

@@ -3,15 +3,19 @@
 namespace App\Filament\Admin\Resources\PlcData\Pages;
 
 use App\Filament\Admin\Resources\PlcData\PlcDataResource;
+use App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets\DataStatsOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use App\Jobs\StatusJob;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Illuminate\Contracts\View\View;
 use Override;
 
 class ListPlcData extends ListRecords
 {
+    use ExposesTableToWidgets;
+    
     protected static string $resource = PlcDataResource::class;
 
     protected function getHeaderActions(): array
@@ -25,7 +29,15 @@ class ListPlcData extends ListRecords
                     // Cukup kirim ke queue, prosesnya akan dikerjakan di background
                     StatusJob::dispatch();
                 }),
-           Actions\CreateAction::make(),
+           //Actions\CreateAction::make(),
+        ];
+    }
+
+    #[Override]
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            DataStatsOverview::class,
         ];
     }
 }

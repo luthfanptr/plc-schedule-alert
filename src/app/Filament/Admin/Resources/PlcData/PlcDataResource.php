@@ -6,21 +6,29 @@ use App\Filament\Admin\Resources\PlcData\Pages\CreatePlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\EditPlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\ListPlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\ViewPlcData;
+use App\Filament\Admin\Resources\PlcData\PlcDataResource\RelationManagers\ComponentsRelationManager;
 use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataForm;
 use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataInfolist;
 use App\Filament\Admin\Resources\PlcData\Tables\PlcDataTable;
 use App\Models\PlcData;
+use App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets\DataStatsOverview;
+
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Override;
+use UnitEnum;
 
 class PlcDataResource extends Resource
 {
     protected static ?string $model = PlcData::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ChartBarSquare;
+
+    protected static string|null|UnitEnum $navigationGroup = 'Dashboard';
 
     public static function form(Schema $schema): Schema
     {
@@ -40,7 +48,7 @@ class PlcDataResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ComponentsRelationManager::class,
         ];
     }
 
@@ -52,5 +60,13 @@ class PlcDataResource extends Resource
             'view' => ViewPlcData::route('/{record}'),
             'edit' => EditPlcData::route('/{record}/edit'),
         ];
+    }
+
+    #[Override]
+    public static function getWidgets(): array
+    {
+        return [
+            DataStatsOverview::class,
+        ];  
     }
 }

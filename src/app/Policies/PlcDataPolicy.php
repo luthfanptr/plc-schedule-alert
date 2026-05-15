@@ -29,7 +29,8 @@ class PlcDataPolicy
 
     public function update(AuthUser $authUser, PlcData $plcData): bool
     {
-        return $authUser->can('Update:PlcData');
+        // return $authUser->can('Update:PlcData');
+        return false;
     }
 
     public function delete(AuthUser $authUser, PlcData $plcData): bool

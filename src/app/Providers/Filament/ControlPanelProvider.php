@@ -27,6 +27,7 @@ class ControlPanelProvider extends PanelProvider
             ->id('control')
             ->path('')
             ->login()
+            ->favicon(asset('images/mi.jpg'))
             ->colors([
                 'primary' => Color::Amber,
             ])

@@ -17,12 +17,12 @@ class PlcDataInfolist
                 TextEntry::make('line')
                     ->numeric(),
                 TextEntry::make('line_name'),
-                TextEntry::make('component_name'),
-                TextEntry::make('counter')
-                    ->numeric(),
-                TextEntry::make('limit')
-                    ->numeric(),
-                TextEntry::make('status'),
+                // TextEntry::make('component_name'),
+                // TextEntry::make('counter')
+                //     ->numeric(),
+                // TextEntry::make('limit')
+                //     ->numeric(),
+                // TextEntry::make('status'),
                 TextEntry::make('plc_date')
                     ->dateTime(),
                 TextEntry::make('created_at')

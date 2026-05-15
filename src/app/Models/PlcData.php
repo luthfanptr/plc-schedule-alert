@@ -35,4 +35,9 @@ class PlcData extends Model
     public function lines(){
         return $this->belongsTo(Line::class);
     }
+
+    // relasi untuk grouping dashboard berdasarkan plc_id
+    public function components(){
+        return $this->hasMany(PlcData::class, 'plc_id', 'plc_id');
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-//! JOB ITU HANYA TEMPAT TRANSAKSI SAJA, BUKAN UNTUK MENAMPILKAN DATA
+
 namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;

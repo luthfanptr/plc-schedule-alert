@@ -14,6 +14,7 @@ class PlcStatusesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->poll('1s')
             ->columns([
                 TextColumn::make('plc_id')
                     ->numeric()

@@ -15,6 +15,12 @@ class PlcDataTable
     {
         return $table
             ->poll('1s')
+            ->defaultSort('id', 'asc')
+            ->modifyQueryUsing(fn ($query) => $query
+                ->select('plc_id', 'plant', 'line', 'line_name')
+                ->selectRaw('MIN(id) as id, MAX(plc_date) as plc_date, MAX(created_at) as created_at, MAX(updated_at) as updated_at')
+                ->groupBy('plc_id', 'plant', 'line', 'line_name')
+            )
             ->columns([
                 TextColumn::make('plc_id')
                     ->label('PLC ID')   
@@ -28,17 +34,30 @@ class PlcDataTable
                 TextColumn::make('line_name')
                     ->label('Line Name')
                     ->searchable(),
-                TextColumn::make('component_name')
-                    ->label('Component Name')
-                    ->searchable(),
-                TextColumn::make('counter')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('limit')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status')
-                    ->searchable(),
+                // TextColumn::make('component_name')
+                //     ->label('Component Name')
+                //     ->searchable(),
+                // TextColumn::make('counter')
+                //     ->numeric()
+                //     ->sortable(),
+                // TextColumn::make('limit')
+                //     ->numeric()
+                //     ->sortable(),
+                // TextColumn::make('status')
+                //     ->badge()
+                //     ->color(fn (string $state): string => match ($state){
+                //         'STANDARD' => 'success',
+                //         'WARNING' => 'warning',
+                //         'DANGER' => 'danger',
+                //         default => 'success', 
+                //     })
+                //     ->icon(fn (string $state): Heroicon => match ($state) {
+                //         'STANDARD' => Heroicon::OutlinedShieldCheck,
+                //         'WARNING' => Heroicon::OutlinedExclamationCircle,
+                //         'DANGER' => Heroicon::OutlinedExclamationTriangle,
+                //         default => Heroicon::OutlinedShieldCheck,
+                //     })
+                //     ->searchable(),
                 TextColumn::make('plc_date')
                     ->label('PLC Date')
                     ->dateTime()

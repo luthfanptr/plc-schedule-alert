@@ -13,12 +13,15 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class PlantResource extends Resource
 {
     protected static ?string $model = Plant::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice2;
+
+    protected static string|null|UnitEnum $navigationGroup = 'Administration';
 
     protected static ?string $recordTitleAttribute = 'Name';
 
