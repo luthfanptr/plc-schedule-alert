@@ -6,8 +6,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+
+use function Pest\Laravel\options;
 
 class PlcStatusesTable
 {
@@ -17,6 +20,7 @@ class PlcStatusesTable
             ->poll('1s')
             ->columns([
                 TextColumn::make('plc_id')
+                    ->label('PLC ID')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('plant')
@@ -25,8 +29,10 @@ class PlcStatusesTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('line_name')
+                    ->label('Plant Name')
                     ->searchable(),
                 TextColumn::make('component_name')
+                    ->label('Component Name')
                     ->searchable(),
                 TextColumn::make('counter')
                     ->numeric()
@@ -37,13 +43,23 @@ class PlcStatusesTable
                 TextColumn::make('status')
                     ->searchable(),
                 TextColumn::make('plc_date')
+                    ->label('PLC Date')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('spk_status')
-                    ->searchable(),
-                TextColumn::make('updated_by')
-                    ->numeric()
-                    ->sortable(),
+                    SelectColumn::make('spk_status')
+                    ->label('SPK Status')
+                    ->options([
+                        'progress' => 'Progress',
+                        'done'        => 'Done',
+                    ])
+                    ->placeholder('NULL')
+                    ->searchable()
+                    ->selectablePlaceholder(fn ($record) => $record?->spk_status === null),
+                TextColumn::make('users.name') // updated_by mapping username akun
+                    ->label('Updated By')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('NULL'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

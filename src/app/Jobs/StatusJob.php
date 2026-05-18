@@ -2,16 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Services\PlcDataService;
+use App\Services\PlcStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\Line;
-use App\Services\MonitoringService;
-use App\Services\PlcDataService;
 
 class StatusJob implements ShouldQueue
 {
@@ -29,9 +26,10 @@ class StatusJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PlcDataService $service): void
+    public function handle(PlcDataService $dataService, PlcStatusService $statusService )
     {
         // Panggil Service
-        $service->syncPlcData();
+        $dataService->syncPlcData();
+        $statusService->filterPlcStatus();
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Override;
 
 class PlcStatus extends Model
 {
@@ -33,6 +35,19 @@ class PlcStatus extends Model
         'limit' => 'integer',
         'plc_date' => 'datetime',
     ];
+
+    // Mapping user yang melakukan update data SPK Status
+    #[Override]
+    protected static function booted()
+    {
+        static::updating(function (PlcStatus $model) {
+            if(Auth::check()) {
+                $model->updated_by = Auth::id();
+
+                $model->unsetRelation('users');
+            }
+        });
+    }
 
     public function users(){
         return $this->belongsTo(User::class, 'updated_by');
