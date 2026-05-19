@@ -6,7 +6,7 @@ use App\Filament\Admin\Resources\PlcData\Pages\CreatePlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\EditPlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\ListPlcData;
 use App\Filament\Admin\Resources\PlcData\Pages\ViewPlcData;
-use App\Filament\Admin\Resources\PlcData\PlcDataResource\RelationManagers\ComponentsRelationManager;
+// use App\Filament\Admin\Resources\PlcData\PlcDataResource\RelationManagers\ComponentsRelationManager;
 use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataForm;
 use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataInfolist;
 use App\Filament\Admin\Resources\PlcData\Tables\PlcDataTable;
@@ -14,7 +14,7 @@ use App\Models\PlcData;
 use App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets\DataStatsOverview;
 
 use BackedEnum;
-use Filament\Resources\RelationManagers\RelationManager;
+//use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -48,7 +48,7 @@ class PlcDataResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ComponentsRelationManager::class,
+            //ComponentsRelationManager::class,
         ];
     }
 

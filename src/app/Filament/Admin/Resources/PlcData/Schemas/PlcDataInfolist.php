@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\PlcData\Schemas;
 
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -31,6 +32,34 @@ class PlcDataInfolist
                 TextEntry::make('updated_at')
                     ->dateTime()
                     ->placeholder('-'),
+
+                // 'components' merujuk ke nama fungsi relasi hasMany di Model PlcData
+                RepeatableEntry::make('components')
+                    ->label('Daftar Komponen')
+                    ->schema([
+                        TextEntry::make('component_name')
+                            ->label('Component Name'),
+                        TextEntry::make('counter')
+                            ->numeric(),
+                        TextEntry::make('limit')
+                            ->numeric(),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'STANDARD' => 'success',
+                                'WARNING' => 'warning',
+                                'DANGER' => 'danger',
+                                default => 'gray',
+                            })
+                            ->icon(fn (string $state): string => match ($state) {
+                                'STANDARD' => 'heroicon-m-check-circle',
+                                'WARNING' => 'heroicon-m-exclamation-triangle',
+                                'DANGER' => 'heroicon-m-x-circle',
+                                default => 'heroicon-m-question-mark-circle',
+                            }),
+                    ])
+                    ->columns(4) // Menyejajarkan 4 kolom informasi komponen agar menyerupai tabel
+                    ->columnSpanFull(), // Memaksa bagian komponen memakan lebar penuh modal
             ]);
     }
 }
