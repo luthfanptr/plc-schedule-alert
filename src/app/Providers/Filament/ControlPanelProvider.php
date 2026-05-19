@@ -25,7 +25,7 @@ class ControlPanelProvider extends PanelProvider
     {
         return $panel
             ->id('control')
-            ->path('')
+            ->path('control')
             ->login()
             ->favicon(asset('images/mi.jpg'))
             ->colors([
@@ -34,7 +34,6 @@ class ControlPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Control/Resources'), for: 'App\Filament\Control\Resources')
             ->discoverPages(in: app_path('Filament/Control/Pages'), for: 'App\Filament\Control\Pages')
             ->pages([
-                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Control/Widgets'), for: 'App\Filament\Control\Widgets')
             ->widgets([

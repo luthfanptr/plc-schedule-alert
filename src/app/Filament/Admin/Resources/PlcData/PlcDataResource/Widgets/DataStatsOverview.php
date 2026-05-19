@@ -35,13 +35,13 @@ class DataStatsOverview extends StatsOverviewWidget
 
             Stat::make('WARNING', $warningCount)
                 ->descriptionIcon('heroicon-o-exclamation-circle')
-                ->description('Require Attention')
+                ->description('Components Need Attention')
                 ->color('warning')
                 ->chart([1,1]),
 
             Stat::make('DANGER', $dangerCount)
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
-                ->description('Immediate Action Needed')
+                ->description('Critical Components')
                 ->color('danger')
                 ->chart([1,1]),
         ];

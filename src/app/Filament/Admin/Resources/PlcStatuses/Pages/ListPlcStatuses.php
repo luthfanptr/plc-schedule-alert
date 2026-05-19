@@ -3,8 +3,10 @@
 namespace App\Filament\Admin\Resources\PlcStatuses\Pages;
 
 use App\Filament\Admin\Resources\PlcStatuses\PlcStatusResource;
-use Filament\Actions\CreateAction;
+use App\Filament\Admin\Resources\PlcStatuses\Widgets\StatusOverview;
+//use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 
 class ListPlcStatuses extends ListRecords
 {
@@ -15,5 +17,13 @@ class ListPlcStatuses extends ListRecords
         return [
             //CreateAction::make(),
         ];
+    }
+
+    #[Override]
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            StatusOverview::class,
+        ];  
     }
 }

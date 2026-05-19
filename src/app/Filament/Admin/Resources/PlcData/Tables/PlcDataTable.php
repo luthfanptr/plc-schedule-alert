@@ -16,6 +16,7 @@ class PlcDataTable
         return $table
             ->poll('1s')
             ->defaultSort('id', 'asc')
+            // untuk filter view details
             ->modifyQueryUsing(fn ($query) => $query
                 ->select('plc_id', 'plant', 'line', 'line_name')
                 ->selectRaw('MIN(id) as id, MAX(plc_date) as plc_date, MAX(created_at) as created_at, MAX(updated_at) as updated_at')
