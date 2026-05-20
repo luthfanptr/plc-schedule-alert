@@ -13,8 +13,12 @@ class StatusOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $warningCount = PlcStatus::where('status', 'WARNING')->count();
-        $dangerCount = PlcStatus::where('status', 'DANGER')->count();
+        $warningCount = PlcStatus::where('status', 'WARNING')
+            ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->count();
+        $dangerCount = PlcStatus::where('status', 'DANGER')
+            ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->count();
 
         $spkProgress = PlcStatus::where('spk_status', 'progress')
             ->distinct()

@@ -104,16 +104,34 @@ class PlcStatusesTable
                     ])
                     ->placeholder('NULL')
                     ->searchable()
-                    ->selectablePlaceholder(fn ($record) => $record?->spk_status === null)
+                    // ->selectablePlaceholder(fn ($record) => $record?->spk_status === null)
+                    // ->updateStateUsing(function ($record, $state) {
+                    //     // mass update (query builder), model hook booted() ga akan terpicu otomatis
+                    //     //update sekalian status spk, upd_by, upd_at utk smua komponen plc_id
+                    //     PlcStatus::where('plc_id', $record->plc_id)
+                    //     ->update([
+                    //         'spk_status' => $state,
+                    //         'updated_by' => Auth::id(),
+                    //         'updated_at' => now(),
+                    //     ]);
+                    // }),
+                    ->rules(fn ($record) => $record?->spk_status !== null ? ['required'] : [])
+    
                     ->updateStateUsing(function ($record, $state) {
+                        // 3. Tambahkan satpam pencegah: Jika spk_status di DB sudah ada isinya, 
+                        // tapi user mencoba memilih opsi NULL (state kosong), gagalkan prosesnya!
+                        if ($record->spk_status !== null && empty($state)) {
+                            return;
+                        }
+
                         // mass update (query builder), model hook booted() ga akan terpicu otomatis
-                        //update sekalian status spk, upd_by, upd_at utk smua komponen plc_id
+                        // update sekalian status spk, upd_by, upd_at utk smua komponen plc_id
                         PlcStatus::where('plc_id', $record->plc_id)
-                        ->update([
-                            'spk_status' => $state,
-                            'updated_by' => Auth::id(),
-                            'updated_at' => now(),
-                        ]);
+                            ->update([
+                                'spk_status' => $state,
+                                'updated_by' => Auth::id(),
+                                'updated_at' => now(),
+                            ]);
                     }),
                 TextColumn::make('users.name') // updated_by mapping username akun
                     ->label('Updated By')
