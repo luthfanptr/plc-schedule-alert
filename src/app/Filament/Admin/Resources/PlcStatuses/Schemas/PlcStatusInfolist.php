@@ -13,30 +13,52 @@ class PlcStatusInfolist
         return $schema
             ->components([
                 TextEntry::make('plc_id')
+                    ->label('PLC ID')
                     ->numeric(),
                 TextEntry::make('plant'),
                 TextEntry::make('line')
                     ->numeric(),
-                TextEntry::make('line_name'),
-                TextEntry::make('component_name'),
+                TextEntry::make('line_name')
+                    ->label('Line Name'),
+                // TextEntry::make('component_name'),
                 // TextEntry::make('counter')
                 //     ->numeric(),
                 // TextEntry::make('limit')
                 //     ->numeric(),
                 // TextEntry::make('status'),
                 TextEntry::make('plc_date')
+                    ->label('PLC Date')
                     ->dateTime(),
+                TextEntry::make('spk_number')
+                    ->label('SPK Number'),
                 TextEntry::make('spk_status')
+                    ->label('SPK Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'progress' => 'warning',
+                        'done' => 'success',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'progress' => 'heroicon-o-clock',
+                        'done' => 'heroicon-o-document-check'
+                    })
                     ->placeholder('-'),
-                TextEntry::make('updated_by')
+                TextEntry::make('users.name')
+                    ->label('Updated By')
                     ->numeric()
                     ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->dateTime()
+                TextEntry::make('spk_start_date')
+                    ->label('SPK Start Date')
                     ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
+                TextEntry::make('spk_finish_date')
+                    ->label('SPK Finish Date')
                     ->placeholder('-'),
+                // TextEntry::make('created_at')
+                //     ->dateTime()
+                //     ->placeholder('-'),
+                // TextEntry::make('updated_at')
+                //     ->dateTime()
+                //     ->placeholder('-'),
 
                 // 'components' merujuk ke nama fungsi relasi hasMany di Model PlcStatuses
                 RepeatableEntry::make('components')

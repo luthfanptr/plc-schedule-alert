@@ -23,6 +23,9 @@ class PlcStatus extends Model
         'status',
         'plc_date',
         'spk_status',
+        'spk_number',
+        'spk_start_date',
+        'spk_finish_date',
         'updated_by',
         'created_at',
         'updated_at',
@@ -34,6 +37,8 @@ class PlcStatus extends Model
         'counter' => 'integer',
         'limit' => 'integer',
         'plc_date' => 'datetime',
+        'spk_start_date' => 'datetime',
+        'spk_finish_date' => 'datetime',
     ];
 
     // Mapping user yang melakukan update data SPK Status

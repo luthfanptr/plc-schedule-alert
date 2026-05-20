@@ -3,12 +3,15 @@
 namespace App\Filament\Admin\Resources\PlcStatuses\Tables;
 
 use App\Models\PlcStatus;
+use Dom\Text;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 //use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +29,9 @@ class PlcStatusesTable
             ->defaultSort('id', 'asc')
             ->modifyQueryUsing(fn ($query) => $query
             ->select('plc_id', 'plant', 'line', 'line_name')
-            ->selectRaw('MIN(id) as id, MAX(plc_date) as plc_date, MAX(created_at) as created_at, MAX(updated_at) as updated_at, MAX(spk_status) as spk_status, MAX(updated_by) as updated_by')
+            ->selectRaw('MIN(id) as id, MAX(plc_date) as plc_date, MAX(created_at) as created_at, MAX(updated_at) as updated_at, 
+                        MAX(spk_status) as spk_status, MAX(updated_by) as updated_by, MAX(spk_number) as spk_number, 
+                        MAX(spk_start_date) as spk_start_date, MAX(spk_finish_date) as spk_finish_date')
 
             ->selectRaw("SUM(CASE WHEN status = 'WARNING' THEN 1 ELSE 0 END) as warning_count")
             ->selectRaw("SUM(CASE WHEN status = 'DANGER' THEN 1 ELSE 0 END) as danger_count")
@@ -96,13 +101,21 @@ class PlcStatusesTable
                     ->label('PLC Date')
                     ->dateTime()
                     ->sortable(),
+                TextInputColumn::make('spk_number')
+                    ->label('SPK Number')
+                    ->placeholder('-')
+                    ->sortable(query: fn ($query, $direction) => $query->orderByRaw("MAX(spk_number) {$direction}"))
+                    ->updateStateUsing(function ($record, $state) {
+                        PlcStatus::where('plc_id', $record->plc_id)
+                            ->update(['spk_number' => $state]);
+                    }),
                 SelectColumn::make('spk_status')
                     ->label('SPK Status')
                     ->options([
                         'progress' => 'Progress',
                         'done'        => 'Done',
                     ])
-                    ->placeholder('NULL')
+                    ->placeholder('-')
                     ->searchable()
                     // ->selectablePlaceholder(fn ($record) => $record?->spk_status === null)
                     // ->updateStateUsing(function ($record, $state) {
@@ -118,26 +131,57 @@ class PlcStatusesTable
                     ->rules(fn ($record) => $record?->spk_status !== null ? ['required'] : [])
     
                     ->updateStateUsing(function ($record, $state) {
-                        // 3. Tambahkan satpam pencegah: Jika spk_status di DB sudah ada isinya, 
-                        // tapi user mencoba memilih opsi NULL (state kosong), gagalkan prosesnya!
+                        // Jika spk_status di DB sudah ada isinya, tapi user pilih opsi NULL proses gagal
                         if ($record->spk_status !== null && empty($state)) {
                             return;
                         }
 
-                        // mass update (query builder), model hook booted() ga akan terpicu otomatis
-                        // update sekalian status spk, upd_by, upd_at utk smua komponen plc_id
-                        PlcStatus::where('plc_id', $record->plc_id)
-                            ->update([
-                                'spk_status' => $state,
-                                'updated_by' => Auth::id(),
-                                'updated_at' => now(),
-                            ]);
+                        $currentSpkNumber = $record->spk_number ?? PlcStatus::where('plc_id', $record->plc_id)->value('spk_number');
+                        
+                        // validasi kalau mau mulai progress tapi spk no belum diketik
+                        if ($state === 'progress' && empty($currentSpkNumber)) {
+                            Notification::make()
+                                ->title('Gagal Memulai Progress')
+                                ->body('SPK Number harus diisi terlebih dahulu pada kolom yang tersedia!')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        // array yang pasti akan diupdate
+                        $updateData = [
+                            'spk_status' => $state,
+                            'updated_by' => Auth::id(),
+                            'updated_at' => now(),
+                        ];
+
+                        // logic pencatatan tanggal
+                        if($state === 'progress') {
+                            // catat waktu mulai (kalo sblmnya kosong, biar ga ketimpa kalo 2x klik)
+                            $updateData['spk_start_date'] = $record->spk_start_date ?? now();
+                        } elseif ($state === 'done') {
+                            // catat waktu selesai ketika done
+                            $updateData['spk_finish_date'] = now();
+                        }
+
+                        // tembak mass update (query builder) utk semua komponen plc_id tsb
+                        PlcStatus::where('plc_id', $record->plc_id)->update($updateData);
                     }),
                 TextColumn::make('users.name') // updated_by mapping username akun
                     ->label('Updated By')
                     ->searchable()
+                    ->placeholder('-'),
+                TextColumn::make('spk_start_date')
+                    ->label('SPK Start Date')
+                    ->searchable()
                     ->sortable()
-                    ->placeholder('NULL'),
+                    ->placeholder('-'),
+                TextColumn::make('spk_finish_date')
+                    ->label('SPK Finish Date')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

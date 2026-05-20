@@ -34,6 +34,12 @@ final class UserInfolist
                             ->icon(Heroicon::ShieldCheck)
                             ->placeholder('-')
                             ->columnSpan('1'),
+                        TextEntry::make('plants.Name')
+                            ->label('Plant Access')
+                            ->badge()
+                            ->icon(Heroicon::BuildingOffice2)
+                            ->placeholder('-')
+                            ->columnSpanFull(),
                         TextEntry::make('email')
                             ->label('Email address')
                             ->icon(Heroicon::Envelope)
