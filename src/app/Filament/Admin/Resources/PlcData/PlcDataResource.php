@@ -11,7 +11,7 @@ use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataForm;
 use App\Filament\Admin\Resources\PlcData\Schemas\PlcDataInfolist;
 use App\Filament\Admin\Resources\PlcData\Tables\PlcDataTable;
 use App\Models\PlcData;
-use App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets\DataStatsOverview;
+use App\Filament\Admin\Resources\PlcData\Widgets\DataStatsOverview;
 
 use BackedEnum;
 //use Filament\Resources\RelationManagers\RelationManager;
@@ -60,13 +60,5 @@ class PlcDataResource extends Resource
             'view' => ViewPlcData::route('/{record}'),
             'edit' => EditPlcData::route('/{record}/edit'),
         ];
-    }
-
-    #[Override]
-    public static function getWidgets(): array
-    {
-        return [
-            DataStatsOverview::class,
-        ];  
     }
 }

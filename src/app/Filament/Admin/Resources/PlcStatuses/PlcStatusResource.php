@@ -9,12 +9,14 @@ use App\Filament\Admin\Resources\PlcStatuses\Pages\ViewPlcStatus;
 use App\Filament\Admin\Resources\PlcStatuses\Schemas\PlcStatusForm;
 use App\Filament\Admin\Resources\PlcStatuses\Schemas\PlcStatusInfolist;
 use App\Filament\Admin\Resources\PlcStatuses\Tables\PlcStatusesTable;
+use App\Filament\Admin\Resources\PlcStatuses\Widgets\StatusOverview;
 use App\Models\PlcStatus;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Override;
 use UnitEnum;
 
 class PlcStatusResource extends Resource

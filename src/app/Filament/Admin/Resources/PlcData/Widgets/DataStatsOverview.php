@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets;
+namespace App\Filament\Admin\Resources\PlcData\Widgets;
 
-use App\Filament\Admin\Resources\PlcData\Pages\ListPlcData;
-use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
@@ -12,13 +10,6 @@ use App\Models\PlcData;
 class DataStatsOverview extends StatsOverviewWidget
 {
     public ?Model $record = null;
-
-    //use InteractsWithPageTable;
-
-    // protected function getTablePage(): string
-    // {
-    //     return ListPlcData::class;
-    // }
 
     protected function getStats(): array
     {

@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Resources\PlcData\Pages;
 
 use App\Filament\Admin\Resources\PlcData\PlcDataResource;
-use App\Filament\Admin\Resources\PlcData\PlcDataResource\Widgets\DataStatsOverview;
+use App\Filament\Admin\Resources\PlcData\Widgets\DataStatsOverview;
 use App\Jobs\StatusJob;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
@@ -37,6 +37,8 @@ class ListPlcData extends ListRecords
                 ->label('Run New Job')
                 ->icon('heroicon-o-arrow-path')
                 ->color('primary')
+                ->requiresConfirmation()
+                ->modalIcon('heroicon-o-arrow-path')
                 ->action(function () {
                     // Cukup kirim ke queue, prosesnya akan dikerjakan di background
                     StatusJob::dispatch();

@@ -35,7 +35,7 @@ class PlcDataInfolist
 
                 // 'components' merujuk ke nama fungsi relasi hasMany di Model PlcData
                 RepeatableEntry::make('components')
-                    ->label('Daftar Komponen')
+                    ->label('Component Lists')
                     ->schema([
                         TextEntry::make('component_name')
                             ->label('Component Name'),

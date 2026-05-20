@@ -16,8 +16,12 @@ class StatusOverview extends StatsOverviewWidget
         $warningCount = PlcStatus::where('status', 'WARNING')->count();
         $dangerCount = PlcStatus::where('status', 'DANGER')->count();
 
-        $spkProgress = PlcStatus::where('spk_status', 'progress')->count();
-        $spkDone = PlcStatus::where('spk_status', 'done')->count();
+        $spkProgress = PlcStatus::where('spk_status', 'progress')
+            ->distinct()
+            ->count('plc_id');
+        $spkDone = PlcStatus::where('spk_status', 'done')
+            ->distinct()
+            ->count('plc_id');
 
         return [
             Stat::make('WARNING', $warningCount)
