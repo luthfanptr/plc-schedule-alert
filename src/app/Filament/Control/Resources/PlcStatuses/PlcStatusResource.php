@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Filament\Control\Resources\PlcStatuses;
+
+use App\Filament\Control\Resources\PlcStatuses\Pages\CreatePlcStatus;
+use App\Filament\Control\Resources\PlcStatuses\Pages\EditPlcStatus;
+use App\Filament\Control\Resources\PlcStatuses\Pages\ListPlcStatuses;
+use App\Filament\Control\Resources\PlcStatuses\Schemas\PlcStatusForm;
+use App\Filament\Control\Resources\PlcStatuses\Tables\PlcStatusesTable;
+use App\Models\PlcStatus;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class PlcStatusResource extends Resource
+{
+    protected static ?string $model = PlcStatus::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Bell;
+
+    protected static string|null|UnitEnum $navigationGroup = 'Dashboard';
+
+    public static function form(Schema $schema): Schema
+    {
+        return PlcStatusForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PlcStatusesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPlcStatuses::route('/'),
+            'create' => CreatePlcStatus::route('/create'),
+            'edit' => EditPlcStatus::route('/{record}/edit'),
+        ];
+    }
+}

@@ -3,10 +3,8 @@
 namespace App\Filament\Admin\Resources\PlcStatuses\Tables;
 
 use App\Models\PlcStatus;
-use Dom\Text;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-//use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\SelectColumn;
@@ -43,41 +41,13 @@ class PlcStatusesTable
                     ->label('PLC ID')
                     ->numeric()
                     ->sortable()
-                    ->html()
-                    ->state(function ($record): string {
-                    $plcId = $record->plc_id;
-                    $warning = $record->warning_count ?? 0;
-                    $danger = $record->danger_count ?? 0;
-
-                    // Tampung badge secara dinamis
-                    $badgeList = '';
-
-                    // 1. WARNING (JIKA ADA)
-                    if ($warning > 0) {
-                        $badgeList .= "<span class='inline-flex items-center justify-center min-w-[18px] h-3.5 px-1 text-[9px] font-black rounded bg-amber-500/10 text-amber-400 border border-amber-500/20' title='Warning'>{$warning}</span>";
-                    }
-
-                    // 2. DANGER (JIKA ADA)
-                    if ($danger > 0) {
-                        $badgeList .= "<span class='inline-flex items-center justify-center min-w-[18px] h-3.5 px-1 text-[9px] font-black rounded bg-rose-500/10 text-rose-400 border border-rose-500/20' title='Danger'>{$danger}</span>";
-                    }
-
-                    // Render susunan vertikal jika ada minimal satu badge yang aktif
-                    if (!empty($badgeList)) {
-                        return "
-                            <div class='flex items-center gap-3'>
-                                <span class='font-normal text-gray-900 dark:text-white text-base'>{$plcId}</span>
-                                <div class='flex flex-col gap-0.5'>
-                                    {$badgeList}
-                                </div>
-                            </div>
-                        ";
-                    }
-
-                    // Jika data kosong semua (fail-safe), tampilkan PLC ID polosan
-                    return "<span class='font-medium text-gray-900 dark:text-white'>{$plcId}</span>";
-                }),
-
+                    ->view('components.plc-badge', function ($record) {
+                        return [
+                            'plcId'   => $record->plc_id,
+                            'warning' => $record->warning_count ?? 0,
+                            'danger'  => $record->danger_count ?? 0,
+                        ];
+                    }),
                 TextColumn::make('plant')
                     ->searchable(),
                 TextColumn::make('line')
@@ -104,8 +74,43 @@ class PlcStatusesTable
                 TextInputColumn::make('spk_number')
                     ->label('SPK Number')
                     ->placeholder('-')
+                    ->searchable()
                     ->sortable(query: fn ($query, $direction) => $query->orderByRaw("MAX(spk_number) {$direction}"))
+                    ->disabled(function () {
+                        /** @var \App\Models\User $user */
+                        $user = Auth::user();
+                        
+                        return ! $user || ! $user->hasRole(['super_admin', 'teknisi']);
+                    })
                     ->updateStateUsing(function ($record, $state) {
+
+                        // Abaikan jika input kosong
+                        if (empty(trim($state ?? ''))) {
+                            PlcStatus::where('plc_id', $record->plc_id)
+                                ->update(['spk_number' => null]);
+                            return;
+                        }
+
+                        // cek nomor spk supaya identik
+                        $existing = PlcStatus::where('spk_number', $state)
+                            ->where('plc_id', '!=', $record->plc_id)
+                            ->select('plc_id')
+                            ->first();
+
+                        if ($existing) {
+                            Notification::make()
+                                ->title('Nomor SPK Sudah Digunakan')
+                                ->body("Nomor SPK \"{$state}\" sudah dipakai oleh PLC {$existing->plc_id}.")
+                                ->danger()
+                                ->persistent() // notif harus tutup manual
+                                ->send();
+
+                            // Reset input ke nilai sebelumnya agar tidak tersimpan
+                            $record->spk_number = $record->getOriginal('spk_number');
+                            return;
+                        }
+
+                        // Aman, lanjut save
                         PlcStatus::where('plc_id', $record->plc_id)
                             ->update(['spk_number' => $state]);
                     }),
@@ -113,60 +118,103 @@ class PlcStatusesTable
                     ->label('SPK Status')
                     ->options([
                         'progress' => 'Progress',
-                        'done'        => 'Done',
+                        'done'     => 'Done',
                     ])
+                    ->disabled(function () {
+                        /** @var \App\Models\User $user */
+                        $user = Auth::user();
+
+                        // Jika user tidak login, atau user BUKAN super_admin/teknisi, maka disable kolomnya
+                        return ! $user || ! $user->hasRole(['super_admin', 'teknisi']);
+                    })
                     ->placeholder('-')
+                    ->selectablePlaceholder(true)
                     ->searchable()
-                    // ->selectablePlaceholder(fn ($record) => $record?->spk_status === null)
-                    // ->updateStateUsing(function ($record, $state) {
-                    //     // mass update (query builder), model hook booted() ga akan terpicu otomatis
-                    //     //update sekalian status spk, upd_by, upd_at utk smua komponen plc_id
-                    //     PlcStatus::where('plc_id', $record->plc_id)
-                    //     ->update([
-                    //         'spk_status' => $state,
-                    //         'updated_by' => Auth::id(),
-                    //         'updated_at' => now(),
-                    //     ]);
-                    // }),
-                    ->rules(fn ($record) => $record?->spk_status !== null ? ['required'] : [])
-    
+
+                    // blokir opsi di level UI sebelum user bisa klik
+                    ->disableOptionWhen(function (string $value, $record) {
+                        $spkNumber = trim($record->spk_number ?? '');
+
+                        // Jika SPK Number kosong, blokir SEMUA opsi (progress & done)
+                        if (empty($spkNumber)) {
+                            return true;
+                        }
+
+                        //Blokir 'done' jika belum pernah 'progress' dulu
+                        if ($value === 'done' && $record->spk_status !== 'progress') {
+                            return true;
+                        }
+
+                        // Jika sudah 'done', blokir opsi 'progress' (tidak boleh mundur)
+                        if ($record->spk_status === 'done' && $value === 'progress') {
+                            return true;
+                        }
+
+                        return false;
+                    })
+
                     ->updateStateUsing(function ($record, $state) {
-                        // Jika spk_status di DB sudah ada isinya, tapi user pilih opsi NULL proses gagal
-                        if ($record->spk_status !== null && empty($state)) {
+                        $realData = PlcStatus::where('plc_id', $record->plc_id)->first();
+                        $statusAsli = $realData?->spk_status;
+
+                        // cegah pengosongan status yang sudah ada
+                        if ($statusAsli !== null && empty($state)) {
+                            Notification::make()
+                                ->title('Aksi Ditolak')
+                                ->body('Status tidak dapat dikosongkan.')
+                                ->danger()
+                                ->send();
                             return;
                         }
 
-                        $currentSpkNumber = $record->spk_number ?? PlcStatus::where('plc_id', $record->plc_id)->value('spk_number');
-                        
-                        // validasi kalau mau mulai progress tapi spk no belum diketik
-                        if ($state === 'progress' && empty($currentSpkNumber)) {
+                        // validasi SPK Number wajib ada untuk SEMUA state (progress & done)
+                        $spkNumber = trim($record->spk_number ?? $realData?->spk_number ?? '');
+                        if (!empty($state) && empty($spkNumber)) {
                             Notification::make()
-                                ->title('Gagal Memulai Progress')
-                                ->body('SPK Number harus diisi terlebih dahulu pada kolom yang tersedia!')
+                                ->title('Gagal')
+                                ->body('Isi SPK Number terlebih dahulu sebelum mengubah status!')
                                 ->danger()
                                 ->send();
 
+                            // reset memori record agar dropdown kembali ke nilai sebelumnya
+                            $record->spk_status = $statusAsli;
                             return;
                         }
 
-                        // array yang pasti akan diupdate
+                        // cegah mundur dari 'done' ke 'progress'
+                        if ($statusAsli === 'done' && $state === 'progress') {
+                            Notification::make()
+                                ->title('Aksi Ditolak')
+                                ->body('Status tidak dapat dikembalikan ke Progress.')
+                                ->danger()
+                                ->send();
+
+                            $record->spk_status = $statusAsli;
+                            return;
+                        }
+
+                        // --- Proses update database ---
                         $updateData = [
                             'spk_status' => $state,
                             'updated_by' => Auth::id(),
                             'updated_at' => now(),
                         ];
 
-                        // logic pencatatan tanggal
-                        if($state === 'progress') {
-                            // catat waktu mulai (kalo sblmnya kosong, biar ga ketimpa kalo 2x klik)
+                        if ($state === 'progress') {
                             $updateData['spk_start_date'] = $record->spk_start_date ?? now();
                         } elseif ($state === 'done') {
-                            // catat waktu selesai ketika done
                             $updateData['spk_finish_date'] = now();
                         }
 
-                        // tembak mass update (query builder) utk semua komponen plc_id tsb
                         PlcStatus::where('plc_id', $record->plc_id)->update($updateData);
+
+                        // Sinkronisasi memori
+                        $record->spk_status = $state;
+
+                        Notification::make()
+                            ->title('Status Berhasil Diperbarui')
+                            ->success()
+                            ->send();
                     }),
                 TextColumn::make('users.name') // updated_by mapping username akun
                     ->label('Updated By')
@@ -196,6 +244,7 @@ class PlcStatusesTable
             ])
             ->recordActions([
                 ViewAction::make()
+                ->label('Details')
                 ->url(null)
                 ->modal()
                 ->modalHeading('Log Details')

@@ -6,6 +6,8 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PlcData;
+use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Auth;
 
 class DataStatsOverview extends StatsOverviewWidget
 {
@@ -13,9 +15,28 @@ class DataStatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $standardCount = PlcData::where('status', 'STANDARD')->count();
-        $warningCount = PlcData::where('status', 'WARNING')->count();
-        $dangerCount = PlcData::where('status', 'DANGER')->count();
+
+        $databaseQuery = PlcData::query();
+
+        // filter data masuk di filament panel berdasarkan assignment plant
+        if (Filament::getCurrentPanel()->getId() === 'control'){
+            /** @var App\Models\User $user */
+            $user = Auth::user();
+
+            if ($user && ! $user->hasRole('super_admin')){
+                $assignedPlant = $user->plants->pluck('Name')->toArray();
+                $databaseQuery->whereIn('plant', $assignedPlant);
+            }
+        }
+
+        // $standardCount = PlcData::where('status', 'STANDARD')->count();
+        // $warningCount = PlcData::where('status', 'WARNING')->count();
+        // $dangerCount = PlcData::where('status', 'DANGER')->count();
+
+        // clone $baseQuery untuk filter data based on plants 
+        $standardCount = (clone $databaseQuery)->where('status', 'STANDARD')->count();
+        $warningCount = (clone $databaseQuery)->where('status', 'WARNING')->count();
+        $dangerCount = (clone $databaseQuery)->where('status', 'DANGER')->count();
 
         return [
             Stat::make('STANDARD', $standardCount)
