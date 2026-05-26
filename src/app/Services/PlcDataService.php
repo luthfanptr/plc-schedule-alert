@@ -8,17 +8,17 @@ use Illuminate\Support\Facades\Log;
 
 class PlcDataService 
 {
-    protected $repo;
+    protected $plcDataRepository;
 
-    public function __construct(PlcDataRepository $repo)
+    public function __construct(PlcDataRepository $plcDataRepository)
     {
-        $this->repo = $repo;
+        $this->plcDataRepository = $plcDataRepository;
     }
 
     public function syncPlcData()
     {
         try {
-            return $this->repo->execPlcData();
+            return $this->plcDataRepository->execPlcData();
         } catch (Exception $e) {
             Log::error('Error Sync PLC Data: ' . $e->getMessage());
             throw new Exception('Failed to sync');

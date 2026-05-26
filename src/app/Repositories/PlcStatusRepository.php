@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 class PlcStatusRepository 
 {
-    public function execPlcStatus(){
+    public function execPlcStatus()
+    {
         return DB::statement('EXEC [dbo].[FILTER_PLC_STATUS]');
     }
 }

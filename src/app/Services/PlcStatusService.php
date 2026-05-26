@@ -5,15 +5,15 @@ use App\Repositories\PlcStatusRepository;
 
 class PlcStatusService
 {
-    protected $repo;
+    protected $plcStatusRepository;
 
-    public function __construct(PlcStatusRepository $repo)
+    public function __construct(PlcStatusRepository $plcStatusRepository)
     {
-        $this->repo = $repo;
+        $this->plcStatusRepository = $plcStatusRepository;
     }
 
     public function filterPlcStatus()
     {
-        return $this->repo->execPlcStatus();
+        return $this->plcStatusRepository->execPlcStatus();
     }
 }

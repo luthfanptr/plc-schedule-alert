@@ -29,9 +29,12 @@ class StatusOverview extends StatsOverviewWidget
             }
         }
 
+        // Hitung jumlah komponen warning
         $warningCount = (clone $statusBaseQuery)->where('status', 'WARNING')
             ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->count();
+
+        // Hitung jumlah komponen danger
         $dangerCount = (clone $statusBaseQuery)->where('status', 'DANGER')
             ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->count();
@@ -43,28 +46,40 @@ class StatusOverview extends StatsOverviewWidget
             ->distinct()
             ->count('plc_id');
 
+        // Hitung jumlah plc warning
+        $plcWarning = (clone $statusBaseQuery)->where('status', 'WARNING')
+            ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->distinct()
+            ->count('plc_id');
+
+        // Hitung jumlah plc danger
+        $plcDanger = (clone $statusBaseQuery)->where('status', 'DANGER')
+            ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->distinct()
+            ->count('plc_id');
+
         return [
             Stat::make('WARNING', $warningCount)
                 ->descriptionIcon('heroicon-o-exclamation-circle')
-                ->description('Component Needs Attention')
+                ->description("Affected: {$plcWarning} PLCs • Maintenance Needed")
                 ->color("warning")
                 ->chart([1, 1]),
 
             Stat::make('DANGER', $dangerCount)
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
-                ->description('Component Critical Issue')
+                ->description("Affected: {$plcDanger} PLCs • Immediate Action Required!")
                 ->color('danger')
                 ->chart([1, 1]),
 
             Stat::make('On Progress', $spkProgress)
                 ->descriptionIcon('heroicon-o-clock')
-                ->description('SPK In Progress')
+                ->description('Active SPK Assignments')
                 ->color('info')
                 ->chart([1, 1]),
 
             Stat::make('Done', $spkDone)
                 ->descriptionIcon('heroicon-o-document-check')
-                ->description('SPK Completed')
+                ->description('Completed SPK Tasks')
                 ->color('success')
                 ->chart([1, 1]),
         ];
