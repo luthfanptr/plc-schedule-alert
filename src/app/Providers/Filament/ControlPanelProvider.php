@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\Control\Pages\Dashboard;
@@ -11,8 +13,9 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 //use Filament\Support\Colors\Color;
-use Filament\Support\Enums\Width;
+use Filament\Support\Colors\Color as FilamentColor;
 //use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,9 +24,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Support\Colors\Color as FilamentColor;
 use Openplain\FilamentShadcnTheme\Color;
-
 
 class ControlPanelProvider extends PanelProvider
 {

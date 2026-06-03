@@ -13,8 +13,6 @@ use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
-use function Pest\Laravel\options;
-
 class PlcStatusesTable
 {
     public static function configure(Table $table): Table
@@ -30,10 +28,8 @@ class PlcStatusesTable
             ->selectRaw('MIN(id) as id, MAX(plc_date) as plc_date, MAX(created_at) as created_at, MAX(updated_at) as updated_at, 
                         MAX(spk_status) as spk_status, MAX(updated_by) as updated_by, MAX(spk_number) as spk_number, 
                         MAX(spk_start_date) as spk_start_date, MAX(spk_finish_date) as spk_finish_date')
-
             ->selectRaw("SUM(CASE WHEN status = 'WARNING' THEN 1 ELSE 0 END) as warning_count")
             ->selectRaw("SUM(CASE WHEN status = 'DANGER' THEN 1 ELSE 0 END) as danger_count")
-
             ->groupBy('plc_id', 'plant', 'line', 'line_name')
             )
             ->columns([

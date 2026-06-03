@@ -36,7 +36,7 @@ class StatusOverview extends StatsOverviewWidget
 
         // Hitung jumlah komponen danger
         $dangerCount = (clone $statusBaseQuery)->where('status', 'DANGER')
-            ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->count();
 
         $spkProgress = (clone $statusBaseQuery)->where('spk_status', 'progress')
@@ -48,26 +48,26 @@ class StatusOverview extends StatsOverviewWidget
 
         // Hitung jumlah plc warning
         $plcWarning = (clone $statusBaseQuery)->where('status', 'WARNING')
-            ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->distinct()
             ->count('plc_id');
 
         // Hitung jumlah plc danger
         $plcDanger = (clone $statusBaseQuery)->where('status', 'DANGER')
-            ->where(fn($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
+            ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->distinct()
             ->count('plc_id');
 
         return [
-            Stat::make('WARNING', $warningCount)
+            Stat::make('TOTAL WARNING COMPONENT', $warningCount)
                 ->descriptionIcon('heroicon-o-exclamation-circle')
-                ->description("Affected: {$plcWarning} PLCs • Maintenance Needed")
-                ->color("warning")
+                ->description("From {$plcWarning} PLC • Require Inspection")
+                ->color('warning')
                 ->chart([1, 1]),
 
-            Stat::make('DANGER', $dangerCount)
+            Stat::make('TOTAL DANGER COMPONENT', $dangerCount)
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
-                ->description("Affected: {$plcDanger} PLCs • Immediate Action Required!")
+                ->description("From {$plcDanger} PLC • Immediate Action Needed")
                 ->color('danger')
                 ->chart([1, 1]),
 

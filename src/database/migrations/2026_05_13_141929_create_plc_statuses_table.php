@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('status'); // status mesin
             $table->dateTime('plc_date');
             $table->enum('spk_status', ['progress', 'done'])->nullable()->default(null); // status spk
+            $table->boolean('escalated')->default(0)->after('spk_status');
             $table->string('spk_number')->nullable();
             $table->dateTime('spk_start_date')->nullable();
             $table->dateTime('spk_finish_date')->nullable();

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
+use App\Services\MailService;
 use App\Services\PlcDataService;
 use App\Services\PlcStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,14 +13,13 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class StatusJob implements ShouldQueue
+final class StatusJob implements ShouldQueue
 {
-    use Queueable, Dispatchable, InteractsWithQueue, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
      */
-
     public function __construct()
     {
         //
@@ -26,10 +28,13 @@ class StatusJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(PlcDataService $dataService, PlcStatusService $statusService )
+    public function handle(PlcDataService $dataService, PlcStatusService $statusService, MailService $mailService)
     {
         // Panggil Service
         $dataService->syncPlcData();
+
         $statusService->filterPlcStatus();
+
+        $mailService->sendDangerAlert();
     }
 }

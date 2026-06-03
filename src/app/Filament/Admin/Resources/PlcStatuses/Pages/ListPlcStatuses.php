@@ -11,10 +11,9 @@ use Override;
 
 class ListPlcStatuses extends ListRecords
 {
-    protected static string $resource = PlcStatusResource::class;
-
     // properti pemantau status sync halaman plcstatuses
     public bool $isSyncing = false;
+    protected static string $resource = PlcStatusResource::class;
 
     // listener untuk menangkap sinyal globalJob
     protected $listeners = [
@@ -30,21 +29,6 @@ class ListPlcStatuses extends ListRecords
     public function disablePolling()
     {
         $this->isSyncing = false;
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            //CreateAction::make(),
-        ];
-    }
-
-    #[Override]
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            StatusOverview::class,
-        ];  
     }
 
     #[Override]
@@ -76,5 +60,20 @@ class ListPlcStatuses extends ListRecords
                     })
                 ),
         ];  
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            // CreateAction::make(),
+        ];
+    }
+
+    #[Override]
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            StatusOverview::class,
+        ];
     }
 }

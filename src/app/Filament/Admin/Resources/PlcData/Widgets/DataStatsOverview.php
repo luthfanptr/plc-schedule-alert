@@ -2,11 +2,11 @@
 
 namespace App\Filament\Admin\Resources\PlcData\Widgets;
 
+use App\Models\PlcData;
+use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\PlcData;
-use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Auth;
 
 class DataStatsOverview extends StatsOverviewWidget
