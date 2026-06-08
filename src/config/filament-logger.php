@@ -45,6 +45,9 @@ return [
         'register' => [
             // App\Models\User::class,
         ],
+        'exclude' => [
+            \App\Models\PersonalAccessToken::class,
+        ],
     ],
 
     'custom' => [

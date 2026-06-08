@@ -55,6 +55,7 @@ final class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->maxContentWidth(Width::Full)
+            ->breadcrumbs(false)
             ->databaseTransactions()
             ->defaultThemeMode(ThemeMode::Light)
             ->colors([

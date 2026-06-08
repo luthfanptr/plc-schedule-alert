@@ -77,6 +77,7 @@ class ControlPanelProvider extends PanelProvider
             ->resources([
                 \App\Filament\Admin\Resources\PlcStatuses\PlcStatusResource::class,
                 \App\Filament\Admin\Resources\PlcData\PlcDataResource::class,
+                \App\Filament\Admin\Resources\PersonalAccessTokens\PersonalAccessTokenResource::class,
             ]);
     }
 }
