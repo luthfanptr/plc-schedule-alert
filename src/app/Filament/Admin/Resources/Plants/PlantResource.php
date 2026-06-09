@@ -21,7 +21,7 @@ class PlantResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice2;
 
-    protected static string|null|UnitEnum $navigationGroup = 'Administration';
+    protected static string|null|UnitEnum $navigationGroup = 'Access';
 
     protected static ?string $recordTitleAttribute = 'Name';
 
