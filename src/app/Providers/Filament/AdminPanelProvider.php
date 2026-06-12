@@ -7,6 +7,7 @@ namespace App\Providers\Filament;
 use App\Filament\Admin\Pages\Dashboard;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\Admin\Widgets\LatestAccessLogs;
+use App\Filament\Widgets\GreetingHeader;
 use App\Models\User;
 use Awcodes\Overlook\OverlookPlugin;
 use Awcodes\Overlook\Widgets\OverlookWidget;
@@ -70,6 +71,7 @@ final class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
+                GreetingHeader::class,
                 OverlookWidget::class,
                 LatestAccessLogs::class,
             ])

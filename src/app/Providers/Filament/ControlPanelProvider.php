@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Filament\Control\Pages\Dashboard;
+use App\Filament\Control\Widgets\PlcPercentageChart;
+use App\Filament\Control\Widgets\SpkChart;
+use App\Filament\Control\Widgets\SpkSummaryWidget;
+use App\Filament\Control\Widgets\TopPlcWidget;
+use App\Filament\Widgets\GreetingHeader;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -12,9 +17,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
-//use Filament\Support\Colors\Color;
 use Filament\Support\Colors\Color as FilamentColor;
-//use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -57,8 +60,13 @@ class ControlPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Control/Widgets'), for: 'App\Filament\Control\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                //AccountWidget::class,
+                GreetingHeader::class,
+                PlcPercentageChart::class,
+                SpkChart::class,
+                SpkSummaryWidget::class,
+                TopPlcWidget::class,
+                //FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -74,6 +82,7 @@ class ControlPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->resources([
                 \App\Filament\Admin\Resources\PlcStatuses\PlcStatusResource::class,
                 \App\Filament\Admin\Resources\PlcData\PlcDataResource::class,

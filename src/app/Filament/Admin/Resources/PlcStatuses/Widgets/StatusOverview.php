@@ -3,14 +3,16 @@
 namespace App\Filament\Admin\Resources\PlcStatuses\Widgets;
 
 use App\Models\PlcStatus;
+use App\Traits\FilamentPlantScope;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class StatusOverview extends StatsOverviewWidget
 {
+    use FilamentPlantScope;
+
     public ?Model $record = null;
 
     protected function getStats(): array
@@ -20,13 +22,7 @@ class StatusOverview extends StatsOverviewWidget
 
         // filter data masuk di filament panel berdasarkan assignment plant
         if (Filament::getCurrentPanel()->getId() === 'control') {
-            /** @var App\Models\User $user */
-            $user = Auth::user();
-
-            if ($user && ! $user->hasRole('super_admin')) {
-                $assignedPlant = $user->plants->pluck('Name')->toArray();
-                $statusBaseQuery->whereIn('plant', $assignedPlant);
-            }
+            $this->plantScope($statusBaseQuery);
         }
 
         // Hitung jumlah komponen warning
@@ -39,9 +35,16 @@ class StatusOverview extends StatsOverviewWidget
             ->where(fn ($query) => $query->where('spk_status', '!=', 'done')->orWhereNull('spk_status'))
             ->count();
 
-        $spkProgress = (clone $statusBaseQuery)->where('spk_status', 'progress')
+        // $spkProgress = (clone $statusBaseQuery)->where('spk_status', 'progress')
+        //     ->distinct()
+        //     ->count('plc_id');
+
+        $spkProgress = (clone $statusBaseQuery)
+            ->whereNotNull('spk_number')
+            ->where(fn ($query) => $query->whereNull('spk_status')->orWhere('spk_status', 'progress'))
             ->distinct()
             ->count('plc_id');
+
         $spkDone = (clone $statusBaseQuery)->where('spk_status', 'done')
             ->distinct()
             ->count('plc_id');

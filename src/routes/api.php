@@ -13,10 +13,6 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::patch('status/{plc_id}/spk_number', [PlcStatusController::class, 'updateSpkNum']);
 });
 
-Route::get('test', function () {
-    return response()->json(['message' => 'ok']);
-});
-
 Route::middleware('auth:sanctum')->get('test2', function () {
     return response()->json(['message' => 'ok']);
 });

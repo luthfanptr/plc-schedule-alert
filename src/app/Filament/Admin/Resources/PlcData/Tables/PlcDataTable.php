@@ -4,9 +4,9 @@ namespace App\Filament\Admin\Resources\PlcData\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-// use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 class PlcDataTable
@@ -33,7 +33,6 @@ class PlcDataTable
                 TextColumn::make('plc_id')
                     ->label('PLC ID')   
                     ->numeric()
-                    ->sortable()
                     ->view('components.plc-badge', function ($record) {
                         return [
                             'plcId'   => $record->plc_id,
@@ -41,12 +40,13 @@ class PlcDataTable
                             'warning' => $record->warning_count ?? 0,
                             'danger'  => $record->danger_count ?? 0,
                         ];
-                    }),
+                    })
+                    ->searchable(),
                 TextColumn::make('plant')
+                    ->toggleable()
                     ->searchable(),
                 TextColumn::make('line')
-                    ->numeric()
-                    ->sortable(),
+                    ->numeric(),
                 TextColumn::make('line_name')
                     ->label('Line Name')
                     ->searchable(),
@@ -76,8 +76,7 @@ class PlcDataTable
                 //     ->searchable(),
                 TextColumn::make('plc_date')
                     ->label('PLC Date')
-                    ->dateTime()
-                    ->sortable(),
+                    ->dateTime(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
