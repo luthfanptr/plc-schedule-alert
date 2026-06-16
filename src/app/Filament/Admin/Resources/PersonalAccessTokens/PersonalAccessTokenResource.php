@@ -10,11 +10,8 @@ use App\Models\PersonalAccessToken;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Override;
 use UnitEnum;
-use Illuminate\Support\Facades\Auth;
 
 class PersonalAccessTokenResource extends Resource
 {
@@ -50,9 +47,9 @@ class PersonalAccessTokenResource extends Resource
         ];
     }
 
-    #[Override]
+    // modul PAT hanya tampil utk role ini
     public static function canViewAny(): bool
     {
-        return !auth()->user()->hasRole('supervisor');
+        return auth()->user()->hasRole('super_admin');
     }
 }

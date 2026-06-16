@@ -27,7 +27,7 @@ class PlcStatusResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Bell;
 
-    protected static string|null|UnitEnum $navigationGroup = 'Dashboard';
+    protected static string|null|UnitEnum $navigationGroup = 'General';
 
     // filter data di filament sesuai plant assigned
     #[Override]

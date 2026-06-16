@@ -41,11 +41,12 @@ class ControlPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->login()
-            ->topbar(false)
+            ->topbar(true)
             ->favicon(asset('images/mi.jpg'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->maxContentWidth(Width::Full)
+            ->breadcrumbs(false)
             ->databaseTransactions()
             ->defaultThemeMode(ThemeMode::Light)
             ->colors([

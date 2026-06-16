@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\PlcData\Pages;
 
 use App\Filament\Admin\Resources\PlcData\PlcDataResource;
 use App\Filament\Admin\Resources\PlcData\Widgets\DataStatsOverview;
+use App\Filament\Widgets\GreetingHeader;
 use App\Jobs\StatusJob;
 use Filament\Actions;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
@@ -98,6 +99,7 @@ class ListPlcData extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
+            GreetingHeader::class,
             DataStatsOverview::class,
         ];
     }

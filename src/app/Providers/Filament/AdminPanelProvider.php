@@ -51,8 +51,8 @@ final class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->login()
-            ->topbar(false)
-            ->favicon(asset('images/mi.jpg'))
+            ->topbar(true)
+            ->favicon(asset('images/mina.ico'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->maxContentWidth(Width::Full)

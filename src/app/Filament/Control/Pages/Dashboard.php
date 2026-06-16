@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Control\Pages;
 
+use App\Filament\Admin\Resources\PlcData\PlcDataResource;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -27,6 +28,19 @@ class Dashboard extends BaseDashboard
         ];
     }
 
+    // plc_data ditampilin di index ketika login sebagai teknisi
+    public function mount(): void 
+    {
+        /**@var App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user?->hasRole('teknisi')) {
+            $this->redirect(
+                PlcDataResource::getUrl('index', panel: 'control')
+            );
+        }
+    }
+
     // =========================================================
     // TODO: Uncomment kalo data udah live/realtime
     // =========================================================
@@ -35,6 +49,7 @@ class Dashboard extends BaseDashboard
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // kalo yang login teknisi, maka form nya kosong
         if ($user?->hasRole('teknisi')) {
             return $schema->components([]);
         }
