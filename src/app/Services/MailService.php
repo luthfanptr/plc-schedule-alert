@@ -41,7 +41,7 @@ class MailService
                 // 1 email per plant
                 Mail::to($teknisiEmails)
                     ->cc($spvEmails)
-                    ->later(now()->addSeconds(5 * $loopIndex), new DangerMail($plant));
+                    ->later(now()->addSeconds(30 * $loopIndex), new DangerMail($plant));
                     // ->queue(new DangerMail($plant));// send/queue
 
                 // Catat log | audit trail log

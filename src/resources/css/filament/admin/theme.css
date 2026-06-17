@@ -6,3 +6,72 @@
 @source '../../../../vendor/awcodes/overlook/resources/**/*.blade.php';
 @source '../../../../vendor/laraveldaily/filawidgets/resources/views/**/*'; /*composer package buat FilaWidgets*/
 @source '../../../../resources/views/**/*';
+
+/* custom theme */
+@theme {
+    --color-main-primary: #343A40;
+    --color-main-secondary: #F5F6F9;
+}
+
+.fi-sidebar {
+    @apply bg-main-primary;
+}
+
+.fi-sidebar-item-icon, .fi-sidebar-item-label {
+    @apply text-white;
+}
+
+.fi-sidebar-item-btn:hover .fi-sidebar-item-icon, .fi-sidebar-item-btn:hover .fi-sidebar-item-label {
+    @apply text-black;
+}
+
+.fi-sidebar-item.fi-active,
+.fi-sidebar-item.fi-active a {
+    @apply bg-blue-600 text-white rounded-sm;
+}
+
+.fi-topbar-start {
+    @apply bg-main-primary;
+    width: 16rem;
+    height: 5rem;
+}
+
+.fi-topbar-start a .fi-logo {
+    @apply text-white;
+}
+
+.fi-topbar {
+    @apply p-0;
+}
+
+.fi-ta-ctn {
+    @apply rounded-sm;
+}
+
+.fi-ta-table th {
+    @apply bg-blue-500 text-white border border-blue-500;
+}
+
+/* .fi-ta-actions button {
+    @apply border-2 p-1 pr-2 rounded-sm bg-blue-500 text-white;
+} */
+
+.fi-ta-actions button.fi-color-primary {
+    @apply border-2 p-1 pr-2 rounded-xl bg-blue-500 text-white;
+}
+
+.fi-ta-actions button.fi-color-danger {
+    @apply border-2 p-1 pr-2 rounded-xl bg-red-500 text-white;
+}
+
+.fi-ta-actions button[wire\:click*="'view'"] {
+    @apply border-2 p-1 pr-2 rounded-xl bg-slate-500 text-white;
+}
+
+.fi-ac-btn-action[x-on\:click="close()"] {
+    @apply border-2 p-2 rounded-full bg-red-500 text-white;
+}
+
+.fi-ta-actions a.fi-color-primary {
+    @apply border-2 p-1 pr-2 rounded-xl bg-blue-500 text-white;
+}

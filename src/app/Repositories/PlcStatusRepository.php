@@ -29,6 +29,7 @@ class PlcStatusRepository
               ->orWhereNull('spk_status');
         })
         ->distinct()
+        ->selectRaw('TRIM(plant) as plant')
         ->pluck('plant');
     }
 }

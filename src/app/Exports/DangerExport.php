@@ -66,7 +66,7 @@ class DangerExport implements FromQuery, WithHeadings, WithMapping, WithStyles
         $lastRow = $this->rowNumber + 4; // 3 header rows + 1 heading row
 
         // Border untuk seluruh tabel
-        $sheet->getStyle("A4:E{$lastRow}")->applyFromArray([
+        $sheet->getStyle("A4:G{$lastRow}")->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

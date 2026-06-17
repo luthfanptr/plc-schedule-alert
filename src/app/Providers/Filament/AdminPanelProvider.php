@@ -8,14 +8,14 @@ use App\Filament\Admin\Pages\Dashboard;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Filament\Admin\Widgets\LatestAccessLogs;
 use App\Filament\Widgets\GreetingHeader;
-use App\Models\User;
+//use App\Models\User;
 use Awcodes\Overlook\OverlookPlugin;
 use Awcodes\Overlook\Widgets\OverlookWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Caresome\FilamentAuthDesigner\AuthDesignerPlugin;
 use Caresome\FilamentAuthDesigner\Enums\MediaPosition;
 use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
-use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
+//use DutchCodingCompany\FilamentDeveloperLogins\FilamentDeveloperLoginsPlugin;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -62,7 +62,7 @@ final class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::adaptive(
                     lightColor: FilamentColor::Blue,
-                    darkColor: FilamentColor::Sky
+                    darkColor: FilamentColor::Green
                 ),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
@@ -86,10 +86,10 @@ final class AdminPanelProvider extends PanelProvider
             ->plugins([
                 AuthDesignerPlugin::make()
                     ->login(fn ($config) => $config
-                        ->media('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
-                        ->mediaPosition(MediaPosition::Left)
+                        ->media('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFL1A6LqpIh72NKko7uheZbq_93MFCZwZSi-fh8Rc4VIAokoVcfeD_PYCTDKJTqJo-81ahmBdENRdnH0H5TncPSpfRSDsdfwa_SHsrjD3HA1Sqwny23ZS7YlfaNzkUTWQXMaXrRxQ=s1360-w1360-h1020-rw')
+                        ->mediaPosition(MediaPosition::Right)
                         ->mediaSize('70%')
-                        ->blur(1)
+                        //->blur(1)
                     )
                     ->themeToggle('90%', '50%'),
                 BreezyCore::make()
@@ -127,10 +127,10 @@ final class AdminPanelProvider extends PanelProvider
                     ->navigationSort(2)
                     ->navigationIcon(Heroicon::ShieldCheck),
                 FilamentLoggerPlugin::make(),
-                FilamentDeveloperLoginsPlugin::make()
-                    ->enabled(app()->environment('local'))
-                    ->switchable(true)
-                    ->users(fn () => User::pluck('email', 'name')->toArray()),
+                // FilamentDeveloperLoginsPlugin::make()
+                //     ->enabled(app()->environment('local'))
+                //     ->switchable(true)
+                //     ->users(fn () => User::pluck('email', 'name')->toArray()),
             ])
             ->middleware([
                 EncryptCookies::class,

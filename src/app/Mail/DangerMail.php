@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Excel as ExcelFormat;
@@ -67,5 +68,10 @@ class DangerMail extends Mailable
                 $fileName
             )->withMime('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
         ];
+    }
+
+    public function middleware(): array
+    {
+        return [new RateLimited('emails')];
     }
 }
