@@ -10,3 +10,7 @@
 /node_modules
 /storage/logs/*.log
 /storage/framework/cache/*
+/script
+
+# Diagram 
+/diagram

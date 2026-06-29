@@ -52,7 +52,7 @@
     @apply bg-blue-500 text-white border border-blue-500;
 }
 
-/* .fi-ta-actions button {
+/* !not_used .fi-ta-actions button { 
     @apply border-2 p-1 pr-2 rounded-sm bg-blue-500 text-white;
 } */
 

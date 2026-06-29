@@ -62,7 +62,7 @@ final class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::adaptive(
                     lightColor: FilamentColor::Blue,
-                    darkColor: FilamentColor::Green
+                    darkColor: FilamentColor::Sky
                 ),
             ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')

@@ -1,289 +1,64 @@
-# PRD — Subsistem Notifikasi Perawatan Mesin & Monitoring SPK
-
-## 1. Overview
-
-Sistem ini bertujuan untuk:
-
-* Monitoring counter mesin dari DB master (MINA_IOT_PKL)
-* Menghasilkan status mesin: NORMAL, WARNING, DANGER
-* Membuat notifikasi otomatis
-* Mendukung lifecycle SPK: NULL → PROGRESS → DONE
-* Menyediakan dashboard supervisor & teknisi
-
-Sistem tidak menghitung counter sendiri. Data counter terdapat di DB Master yang nantinya akan dibuat logic treshold untuk trigger warning/danger status
-
----
-
-# 2. Goals
-
-* Monitoring mesin otomatis via scheduler
-* Warning ketika counter >= threshold
-* Menyimpan history status mesin
-* Escalation ke danger jika tidak ditindak
-* Teknisi dapat membuat & update SPK
-* Supervisor dapat melihat status mesin (history list beserta status dan daten terakhir kali si scheduler aktif, baik itu yang masih normal/warning/danger)
-
----
-
-# 3. Non Goals
-
-* Tidak menyimpan persentase
-* Tidak menghitung counter dari raw data
-* Tidak membuat analytics kompleks
-* Tidak membuat forecasting
-
----
-
-# 4. User Roles
-
-## Supervisor
-
-Melihat dashboard monitoring yang berisi modul-modul:
-* Melihat history dan status mesin berdasarkan filter terakhir kali scheduler dijalankan (berdasarkan PLANT nya masing-masing)
-* Melihat SPK progress
-
-## Teknisi
-
-* Menerima notifikasi warning/danger data PLC
-* Memulai SPK (diluar sistem)
-* Update SPK progress dan selesai
-
----
-
-# 5. Status Lifecycle Mesin
-
-NORMAL (< 75% threshold)
-↓
-WARNING (>=75% threshold)
-↓
-DANGER (>=100% limit & bereskalasi)
-↓
-PROGRESS (teknisi mulai SPK)
-↓
-DONE (SPK selesai)
-
----
-
-# 6. Scheduler Flow
-
-Scheduler berjalan tiap interval (tiap hari jam 07:00)
-
-Flow:
-
-1. Query DB Master
-2. Ambil counter & limit mesin
-3. Hitung threshold (logic)
-4. Ambil state mesin dari DB sistem
-5. Tentukan status baru
-6. Jika status berubah → insert notification
-7. Kirim email teknisi
-
----
-
-# 7. Database Schema
-
-## Table: machines
-
-Tujuan: menyimpan data master mesin
-
-id (PK)
-machine_code
-machine_name
-plant
-line
-limit_count
-threshold_percent
-is_active
-created_at
-updated_at
-
----
-
-## Table: machine_alert_states
-
-Tujuan: menyimpan state terakhir mesin
-
-machine_code
-current_status (NORMAL/WARNING/DANGER/PROGRESS/DONE)
-last_counter
-warning_at
-danger_at
-spk_status (NONE/PROGRESS/DONE)
-updated_at
-
----
-
-## Table: notifications
-
-Tujuan: history semua perubahan status mesin
-
-id (PK)
-machine_code
-status
-counter
-message
-created_at
-is_read
-
----
-
-# 8. Modules
-
-## Modul 1 — Dashboard Monitoring (Supervisor)
-
-Tujuan: melihat kondisi mesin realtime
-
-Tampilan:
-
-## Machine   Counter   Limit   Status     SPK
-
-MINA-01   15        20      WARNING    -
-MINA-02   20        20      DANGER     PROGRESS
-MINA-03   3         20      NORMAL     -
-
-Fitur:
-
-* Filter plant
-* Filter line
-* Filter status
-* Search mesin
-* Sorting counter
-* Refresh realtime
-* Klik detail mesin
-* View history
-
----
-
-## Modul 2 — Notifikasi Teknisi
-
-Tujuan: teknisi menerima warning dan update SPK
-
-Tampilan:
-
-## Machine   Status   Counter   Time
-
-MINA-01   WARNING  15        10:05
-MINA-02   DANGER   20        10:10
-
-Fitur:
-
-* View notifikasi
-* Start SPK
-* Update progress
-* Mark done
-* Filter status
-* Sorting terbaru
-
----
-
-## Modul 3 — Master Mesin
-
-Tujuan: mengelola data mesin
-
-Tampilan:
-
-## Machine   Plant   Line   Limit   Status
-
-MINA-01   A       1      20      Active
-MINA-02   A       1      20      Active
-
-Fitur:
-
-* Tambah mesin
-* Edit mesin
-* Set limit
-* Set threshold
-* Assign plant
-* Assign line
-* Active / inactive
-
----
-
-# 9. Notification Rules
-
-WARNING
-counter >= limit * threshold_percent
-
-DANGER
-counter >= limit
-AND status sebelumnya WARNING
-AND SPK belum dibuat
-
-PROGRESS
-teknisi klik start SPK
-
-DONE
-teknisi klik selesai
-
----
-
-# 10. Email Notification
-
-Trigger:
-
-* WARNING
-* DANGER
-
-Subject:
-WARNING MESIN MINA-01
-
-Body:
-Machine : MINA-01
-Status  : WARNING
-Counter : 15
-Limit   : 20
-
-Segera lakukan pengecekan
-
----
-
-# 11. Dashboard Summary Cards
-
-Total Mesin
-Warning
-Danger
-Progress
-Done
-
-Example:
-Total : 50
-Warning : 5
-Danger : 2
-Progress : 3
-Done : 10
-
----
-
-# 12. System Flow
-
-Scheduler
-↓
-Query DB Master
-↓
-Hitung threshold
-↓
-Cek state mesin
-↓
-Update state
-↓
-Insert notification
-↓
-Send email
-
----
-
-# 13. UI Navigation
-
-Sidebar:
-Dashboard Monitoring
-Notifications
-Machine Master
-
-Supervisor:
-
-* Dashboard Monitoring
-* Machine Master
-
-Teknisi:
-
-* Notifications
+# PRD — PLC Warning System
+
+## 1. Ringkasan Proyek
+### 1.1 Tujuan
+Dokumen PRD ini menguraikan persyaratan untuk aplikasi MINA PLC Warning System, sebuah subsistem untuk menampilkan status komponen mesin pada lini produksi di PT Mitsuba Indonesia berdasarkan data PLC yang diklasifikasikan menjadi tiga status yaitu **Standard**, **Warning**, dan **Danger** dalam bentuk dashboard untuk mendukung proses maintenance mesin oleh teknisi, serta menyediakan dashboard pelaporan bagi supervisor dan teknisi dengan data yang terbagi berdasarkan plant masing-masing.
+
+### 1.2 Target Pengguna
+- Teknisi yang bertugas untuk melakukan pengecekan dan perawatan komponen mesin produksi PT Mitsuba Indonesia
+- Supervisor pada setiap plant produksi PT Mitsuba Indonesia untuk memonitoring kondisi mesin supaya meminimalisir gangguan selama proses produksi
+
+## 2. Fitur Utama
+- **Pemantauan dan Sinkronisasi Batch Otomatis**  
+Mengintegrasikan sistem penarikan data mentah dari PLC mesin secara berkala menggunakan sistem Scheduler setiap hari jam 07:00 WIB serta opsi pemicu manual bagi supervisor.
+
+- **Kontrol Akses Berbasis Peran (RBAC) dan Scope berdasarkan Plant**  
+Menerapkan pembatasan hak akses multi-aktor (Super Admin, Supervisor, Teknisi) yang diperketat menggunakan mekanisme Plant Scoping. Data mesin, grafik, dan log gangguan otomatis difilter sesuai dengan Plant dan lini produksi (Line) yang ditugaskan ke masing-masing aktor.
+
+- **Dashboard Data Monitoring Dinamis**  
+Menampilkan visualisasi ringkasan status kesehatan komponen mesin secara dinamis ke dalam 3 kategori utama (**STANDARD**, **WARNING**, **DANGER**) yang dilengkapi dengan indikator waktu sinkronisasi terakhir demi validitas data lapangan.
+
+- **Maintenance Logging Workflow**  
+Menyediakan Custom Action Button interaktif sebagai respon tindakan yang dilakukan teknisi terhadap status komponen
+
+- **Secure API Token Gateway & Integration Framework**  
+Menyediakan modul Token Generator internal bagi Super Admin untuk menjembatani integrasi data dengan aplikasi divisi lain dengan standar keamanan pada database.
+
+- **Integrated Interactive API Documentation**  
+Menyediakan halaman panduan teknis integrasi (API Docs) bawaan di dalam dashboard control system sebagai panduan untuk mengonsumsi data endpoint PLC menggunakan metode autentikasi Bearer Token.
+
+## 3. Teknologi yang Digunakan
+- **Backend** : Laravel 12
+- **User Interface** : Filament V5 dengan Tailwind CSS 4
+- **Database** : SQL Server 2022
+- **Email** : Mailtrap
+- **API** : REST API 
+
+## 4. Kebutuhan Teknis
+### **Database**  
+- Konfigurasi database SQL Server 2022 (SSMS) pada Laravel
+- Migrations untuk semua table yang dibutuhkan
+- Stored Procedure untuk index query yang efisien
+
+### **Backend**
+- Repository pattern untuk manajemen query database dan pemisahan logika akses data
+- Service layer untuk logika bisnis utama 
+- Job queue untuk pemrosesan data secara batch dan pengiriman email otomatis
+- Konfigurasi task scheduler untuk sinkronisasi otomatis harian
+- Autentikasi API menggunakan Laravel Sanctum (Bearer Token)
+
+### **User Interface**
+- Integrasi panel filament v5 untuk tampilan dashboard
+- Visibilitas data yang dibatasi berdasarkan plant yang ditugaskan ke user yang login
+- Data report dinamis untuk pemantauan status 
+- Navigasi sidebar yang terkelompok
+
+### **Security**
+- Role-Based Access Control (RBAC) menggunakan package filament-shield
+- Eloquent query scope untuk isolasi data yang ketat
+- Manajemen siklus hidup token API yang aman
+
+### **Performance**
+- Arsitektur batch processing untuk meminimalkan beban input/output pada database utama
+- Optimasi query Eloquent untuk meminimalkan beban query data
+- Eksekusi proses background untuk tugas sinkronisasi yang berjalan lama lewat queue

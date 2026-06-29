@@ -80,6 +80,7 @@ class ListPlcData extends ListRecords
                 ->label('Run New Job')
                 ->icon('heroicon-o-arrow-path')
                 ->color('primary')
+                ->visible(fn () => ! auth()->user()?->hasRole('teknisi'))
                 ->requiresConfirmation()
                 ->modalIcon('heroicon-o-arrow-path')
                 ->action(function () {
