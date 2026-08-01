@@ -10,13 +10,13 @@ class PersonalAccessToken extends SanctumToken
         'name', 
         'token',
         'abilities',
-        'description',
-        'is_shared',
-        'plain_token',
+        'encrypted_plain_token',
     ];
 
     protected $casts = [
         'abilities' => 'json',
-        'is_shared' => 'boolean',
+        'expires_at' => 'datetime',
+        'last_used_at' => 'datetime',
+        'encrypted_plain_token' => 'encrypted',
     ];
 }

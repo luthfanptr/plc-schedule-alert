@@ -56,7 +56,7 @@ class SpkSummaryWidget extends Widget
             ->with('users');
         $this->plantScope($activeQuery);
 
-        $active = $activeQuery->get()->map(fn ($r) => (object) [
+        $active = $activeQuery->get()->toBase()->map(fn ($r) => (object) [
             'spk_number'      => $r->spk_number,
             'plc_id'          => $r->plc_id,
             'line'            => $r->line,
@@ -81,7 +81,7 @@ class SpkSummaryWidget extends Widget
             ->groupBy('spk_number')
             ->map(fn ($rows) => $rows->first()->users?->name ?? '-');
 
-        $resolved = (clone $logBaseQuery)->get()->map(fn ($r) => (object) [
+        $resolved = (clone $logBaseQuery)->get()->toBase()->map(fn ($r) => (object) [
             'spk_number'      => $r->spk_number,
             'plc_id'          => $r->plc_id,
             'line'            => $r->line,

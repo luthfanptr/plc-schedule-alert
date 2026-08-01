@@ -23,6 +23,8 @@ class PlcStatusResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = 'General';
 
+    public static function getNavigationLabel(): string { return 'PLC Status'; }
+
     public static function form(Schema $schema): Schema
     {
         return PlcStatusForm::configure($schema);

@@ -1,31 +1,51 @@
-<div class="space-y-4 p-4" x-data="{ copied: false }">
-    <p class="text-sm text-gray-500 dark:text-gray-400">
-        Don't share this token to someone for security reasons!
-    </p>
+<div class="space-y-3 p-1" x-data="{ copied: false }">
+    <!-- Notice / Security Warning -->
+    <div class="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/50">
+        <svg class="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+        <span><strong>Warning:</strong> Do not share this token with anyone for security reasons!</span>
+    </div>
 
-    <div class="flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-500 bg-gray-50 dark:bg-gray-900 p-3">
-        <code class="flex-1 break-all text-sm font-mono text-gray-900 dark:text-gray-100">
+    <!-- Token Box Container -->
+    <div class="relative flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50/80 p-3.5 shadow-sm transition-all dark:border-gray-800 dark:bg-gray-900/80">
+        <!-- Token String -->
+        <code class="flex-1 break-all font-mono text-xs font-medium text-gray-800 dark:text-gray-200 select-all">
             {{ $token }}
         </code>
 
+        <!-- Copy Button -->
         <button
             type="button"
             x-on:click="
                 navigator.clipboard.writeText('{{ $token }}');
                 copied = true;
-                setTimeout(() => copied = false, 2000);
+                setTimeout(() => copied = false, 2500);
             "
-            style="width:32px;height:32px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:4px;padding:4px;"
+            class="relative inline-flex shrink-0 items-center justify-center rounded-lg p-2 text-gray-500 transition-all hover:bg-gray-200/60 hover:text-gray-700 active:scale-95 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+            :class="copied ? '!text-emerald-600 dark:!text-emerald-400 !bg-emerald-50 dark:!bg-emerald-950/50' : ''"
+            title="Copy to clipboard"
         >
-            <span x-show="copied" style="display:none;">
-                <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#22c55e">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
-                </svg>
-            </span>
-            <span x-show="!copied">
-                <svg xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#6b7280">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
-                </svg>
+            <!-- Copied Icon (Checkmark) -->
+            <svg x-show="copied" x-cloak class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+
+            <!-- Default Copy Icon -->
+            <svg x-show="!copied" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5" />
+            </svg>
+
+            <!-- Tooltip Feedback Badge -->
+            <span 
+                x-show="copied" 
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                x-cloak 
+                class="absolute -top-8 right-0 rounded bg-gray-900 px-2 py-0.5 text-[10px] font-medium text-white shadow-md dark:bg-gray-100 dark:text-gray-900"
+            >
+                Copied!
             </span>
         </button>
     </div>

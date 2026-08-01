@@ -25,9 +25,7 @@ class CreatePersonalAccessToken extends CreateRecord
         );
 
         $newToken->accessToken->forceFill([
-            'description' => 'plc_warning',
-            'is_shared'   => true,
-            'plain_token' => $newToken->plainTextToken,
+            'encrypted_plain_token' => $newToken->plainTextToken,
         ])->save();
 
         return $newToken->accessToken;

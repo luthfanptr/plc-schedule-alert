@@ -29,6 +29,8 @@ class PlcDataResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = 'General';
 
+    public static function getNavigationLabel(): string { return 'PLC Data'; }
+
     public static function form(Schema $schema): Schema
     {
         return PlcDataForm::configure($schema);
@@ -61,8 +63,7 @@ class PlcDataResource extends Resource
         ];
     }
 
-    // filter panel User berdasarkan assignment Plant nya
-    #[Override]
+    // filter panel User berdasarkan assignment Plant nya\
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();

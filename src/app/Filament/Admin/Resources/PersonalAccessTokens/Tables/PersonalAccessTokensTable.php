@@ -9,6 +9,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Carbon\Carbon;
 
 class PersonalAccessTokensTable
 {
@@ -18,31 +19,50 @@ class PersonalAccessTokensTable
             ->columns([
                 TextColumn::make('name')
                     ->label('Token Name')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
 
-                TextColumn::make('plain_token')
+                TextColumn::make('encrypted_plain_token')
                     ->label('Token')
-                    ->formatStateUsing(fn($state) => '...' . substr($state, -8)),
+                    ->formatStateUsing(fn($state) => '...' . substr($state, -8))
+                    ->fontFamily('mono')
+                    ->color('gray'),
 
                 TextColumn::make('abilities')
                     ->label('Abilities')
-                    ->badge(),
+                    ->badge()
+                    ->separator(',')
+                    ->color(fn (string $state): string => match (($state)) {
+                        'read' => 'info',
+                        'update' => 'warning',
+                    }),
 
                 TextColumn::make('tokenable.name')
                     ->label('Created By')
                     ->visible(fn() => auth()->check() && auth()->user()->hasRole('super_admin')),
 
-                TextColumn::make('description')
-                    ->label('Description'),
+                // TextColumn::make('description')
+                //     ->label('Description'),
 
                 TextColumn::make('last_used_at')
                     ->label('Last Used')
-                    ->dateTime()
+                    ->since()
+                    ->placeholder('Never')
                     ->sortable(),
 
                 TextColumn::make('expires_at')
-                    ->label('Expires At')
-                    ->dateTime()
+                    ->label('Expires')
+                    ->formatStateUsing(fn ($state) => $state?->format('M j, Y H:i:s'))
+                    ->placeholder('Never')
+                    ->color(function ($state) {
+                        if (! $state) {
+                            return 'gray';
+                        }
+
+                        return $state->isPast()
+                            ? 'danger'
+                            : 'success';
+                    })
                     ->sortable(),
 
                 TextColumn::make('created_at')
@@ -55,7 +75,7 @@ class PersonalAccessTokensTable
                 if (!$user->hasRole('super_admin')) {
                     $query->where('tokenable_id', $user->id);
                 }
-                return $query->where('description', 'plc_warning');
+                return $query;
             })
             ->filters([
                 //
@@ -67,7 +87,7 @@ class PersonalAccessTokensTable
                 ->modalHeading('Token Detail')
                 ->modalContent(fn($record) => view(
                     'filament.modals.token-detail',
-                    ['token' => $record->plain_token]
+                    ['token' => $record->encrypted_plain_token]
                 ))
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close'),

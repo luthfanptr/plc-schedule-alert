@@ -25,6 +25,8 @@ class PlcDataResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = 'General';
 
+    public static function getNavigationLabel(): string { return 'PLC Data'; }
+
     public static function form(Schema $schema): Schema
     {
         return PlcDataForm::configure($schema);

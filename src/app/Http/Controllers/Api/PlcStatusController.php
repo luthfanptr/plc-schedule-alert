@@ -11,6 +11,10 @@ class PlcStatusController extends Controller
     // GET /api/status
     public function index(Request $request)
     {
+        $request->validate([
+            'plc_id' => 'sometimes|integer',
+        ]);
+
         $query = PlcStatus::query();
 
         if ($request->has('plc_id')) {
@@ -25,7 +29,7 @@ class PlcStatusController extends Controller
     }
 
     //PATCH /api/status/{plc_id}/spk_number
-    public function updateSpkNum(Request $request, $plc_id) 
+    public function updateSpkNum(Request $request, int $plc_id) 
     {
         $request->validate([
             'spk_number' => 'required|string|max:255',

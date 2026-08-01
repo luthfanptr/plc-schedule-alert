@@ -7,7 +7,9 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 
 class PersonalAccessTokenForm
 {
@@ -20,18 +22,30 @@ class PersonalAccessTokenForm
                     ->required()
                     ->maxLength(255),
 
-                CheckboxList::make('abilities')
+                ToggleButtons::make('abilities')
                     ->label('Abilities')
                     ->options([
-                    'read'       => 'Read PLC Statuses',
-                    'update_spk' => 'Update SPK Number',
+                    'read' => 'Read',
+                    'update' => 'Update',
                     ])
+                    ->multiple()
                     ->required()
-                    ->columns(2),
+                    ->grouped(true)
+                    ->colors([
+                        'read' => Color::Blue,
+                        'update' => Color::Orange,
+                    ])
+                    ->icons([
+                        'read' => 'heroicon-o-eye',
+                        'update' => 'heroicon-o-pencil-square',
+                    ])
+                    ->columns(2)
+                    ->inline(false)
+                    ->columnSpanFull(), //
                     
-                Textarea::make('description')
-                    ->label('Description')
-                    ->nullable(),
+                // Textarea::make('description')
+                //     ->label('Description')
+                //     ->nullable(),
 
                 Toggle::make('has_expiry')
                 ->label('Set Expiration Date')
@@ -41,8 +55,9 @@ class PersonalAccessTokenForm
                 DateTimePicker::make('expires_at')
                     ->label('Expires At')
                     ->minDate(now())
-                    ->nullable()
-                    ->visible(fn($get) => $get('has_expiry')),
+                    ->visible(fn ($get) => (bool) $get('has_expiry'))
+                    ->required(fn ($get) => (bool) $get('has_expiry'))
+                    ->columnSpanFull()
             ]);
     }
 }

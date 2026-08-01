@@ -20,8 +20,6 @@ class TokenResource extends JsonResource
             'id'          => $this->id,
             'name'        => $this->name,
             'abilities'   => $this->abilities,
-            'description' => $this->description,
-            'is_shared'   => $this->is_shared,
             'last_used_at'=> $this->last_used_at,
             'expires_at'  => $this->expires_at,
             'created_at'  => $this->created_at,

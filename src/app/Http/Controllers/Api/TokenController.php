@@ -19,11 +19,9 @@ class TokenController extends Controller
 
         $token = $user->hasRole('super_admin') 
         ? PersonalAccessToken::with('tokenable')
-            ->where('description', 'plc_warning')
             ->paginate(15)
         : PersonalAccessToken::with('tokenable')
             ->where('tokenable_id', $user->id)
-            ->where('description', 'plc_warning')
             ->paginate(15);
 
         return TokenResource::collection($token);
@@ -37,7 +35,6 @@ class TokenController extends Controller
         $request->validate([
             'name'        => 'required|string|max:255',
             'abilities'   => 'required|array',
-            'description' => 'nullable|string',
             'expires_at'  => 'nullable|date|after:now',
         ]);
 
@@ -47,9 +44,9 @@ class TokenController extends Controller
             $request->expires_at ? Carbon::parse($request->expires_at) : null
         );
 
+        //! enkripsi token di database
         $newToken->accessToken->update([
-            'description' => 'plc_warning',
-            'is_shared'   => true,
+            'encrypted_plain_token' => $newToken->plainTextToken,
         ]);
 
         $resource = new TokenResource($newToken->accessToken);
@@ -64,7 +61,11 @@ class TokenController extends Controller
     public function show(Request $request, $id)
     {
         $token = $this->findAuthorizedToken($request->user(), $id);
-        return new TokenResource($token->load('tokenable'));
+        
+        $resource = new TokenResource($token->load('tokenable'));
+        $resource->plain_token = $token->decrypted_token; //! decrypt token untuk di show
+
+        return $resource;
     }
 
     /**
@@ -97,13 +98,12 @@ class TokenController extends Controller
 
     private function findAuthorizedToken($user, $id): PersonalAccessToken
     {
-        $token = PersonalAccessToken::findOrFail($id);
+        abort_unless(
+            $user->hasRole('super_admin'),
+            403,
+            'Only Admin can manage API tokens.'
+        );
 
-        $isOwner = $token->tokenable_id === $user->id;
-        $isAdmin = $user->hasRole('super_admin');
-
-        abort_if(!$isOwner && !$isAdmin, 403, 'Don\'t have access to this token');
-
-        return $token;
+        return PersonalAccessToken::findOrFail($id);
     }
 }

@@ -19,7 +19,12 @@ class PersonalAccessTokenResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-s-key';
 
-    protected static string|null|UnitEnum $navigationGroup = 'Access';
+    protected static string|null|UnitEnum $navigationGroup = 'API Access';
+
+    public static function getNavigationLabel(): string
+    {
+        return 'API Keys';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -42,7 +47,7 @@ class PersonalAccessTokenResource extends Resource
     {
         return [
             'index' => ListPersonalAccessTokens::route('/'),
-            'create' => CreatePersonalAccessToken::route('/create'),
+            //'create' => CreatePersonalAccessToken::route('/create'),
             //'edit' => EditPersonalAccessToken::route('/{record}/edit'),
         ];
     }

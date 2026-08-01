@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
+use App\Models\PersonalAccessToken;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Activitylog\Models\Activity;
+use Dedoc\Scramble\Scramble;
+use Dedoc\Scramble\Support\Generator\OpenApi;
+use Dedoc\Scramble\Support\Generator\SecurityScheme;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +40,7 @@ final class AppServiceProvider extends ServiceProvider
         RateLimiter::for('emails', function (){
             return Limit::perSecond(20);
         });
+        
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         Gate::policy(Activity::class, ActivityPolicy::class);
         Page::formActionsAlignment(Alignment::Right);
@@ -48,5 +52,12 @@ final class AppServiceProvider extends ServiceProvider
                 ->danger()
                 ->send();
         };
+
+        Scramble::configure()
+        ->withDocumentTransformers(function (OpenApi $openApi) {
+            $openApi->secure(
+                SecurityScheme::http('bearer')
+            );
+        });
     }
 }

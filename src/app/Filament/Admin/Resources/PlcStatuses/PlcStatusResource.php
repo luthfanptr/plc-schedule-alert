@@ -29,8 +29,9 @@ class PlcStatusResource extends Resource
 
     protected static string|null|UnitEnum $navigationGroup = 'General';
 
+    public static function getNavigationLabel(): string { return 'PLC Status'; }
+
     // filter data di filament sesuai plant assigned
-    #[Override]
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();

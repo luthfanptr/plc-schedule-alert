@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\PlcStatuses\Widgets;
 use App\Models\PlcStatus;
 use App\Traits\FilamentPlantScope;
 use Filament\Facades\Filament;
+use Filament\Support\Colors\Color;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,13 @@ class StatusOverview extends StatsOverviewWidget
     use FilamentPlantScope;
 
     public ?Model $record = null;
+
+    protected int | string | array $columnSpan = 'full';
+
+    protected function getColumns(): int
+    {
+        return 5;
+    }
 
     protected function getStats(): array
     {
@@ -39,9 +47,15 @@ class StatusOverview extends StatsOverviewWidget
         //     ->distinct()
         //     ->count('plc_id');
 
+        $spkIssued = (clone $statusBaseQuery)
+            ->whereNotNull('spk_number')
+            ->where(fn ($query) => $query->whereNull('spk_status'))
+            ->distinct()
+            ->count('plc_id');
+
         $spkProgress = (clone $statusBaseQuery)
             ->whereNotNull('spk_number')
-            ->where(fn ($query) => $query->whereNull('spk_status')->orWhere('spk_status', 'progress'))
+            ->where(fn ($query) => $query->where('spk_status', 'progress'))
             ->distinct()
             ->count('plc_id');
 
@@ -62,28 +76,34 @@ class StatusOverview extends StatsOverviewWidget
             ->count('plc_id');
 
         return [
-            Stat::make('TOTAL WARNING COMPONENT', $warningCount)
+            Stat::make('Warning Components', $warningCount)
                 ->descriptionIcon('heroicon-o-exclamation-circle')
                 ->description("From {$plcWarning} PLC • Require Inspection")
-                ->color('warning')
+                ->color(Color::Amber)
                 ->chart([1, 1]),
 
-            Stat::make('TOTAL DANGER COMPONENT', $dangerCount)
+            Stat::make('Danger Components', $dangerCount)
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
                 ->description("From {$plcDanger} PLC • Immediate Action Needed")
-                ->color('danger')
+                ->color(Color::Red)
                 ->chart([1, 1]),
 
-            Stat::make('On Progress', $spkProgress)
+            Stat::make('Unassigned', $spkIssued)
+                ->descriptionIcon('heroicon-o-clipboard-document-list')
+                ->description('Awaiting Action')
+                ->color(Color::Purple)
+                ->chart([1, 1]),
+
+            Stat::make('Progress', $spkProgress)
                 ->descriptionIcon('heroicon-o-clock')
-                ->description('Active SPK Assignments')
-                ->color('info')
+                ->description('SPK in Progress')
+                ->color(Color::Blue)
                 ->chart([1, 1]),
 
             Stat::make('Done', $spkDone)
                 ->descriptionIcon('heroicon-o-document-check')
                 ->description('Completed SPK Tasks')
-                ->color('success')
+                ->color(Color::Emerald)
                 ->chart([1, 1]),
         ];
     }

@@ -36,6 +36,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jacobtims\FilamentLogger\FilamentLoggerPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Openplain\FilamentShadcnTheme\Color;
+use ThalysJuvenal\Aurum\AurumTheme;
+use ThalysJuvenal\Aurum\Presets\Sapphire;
 
 final class AdminPanelProvider extends PanelProvider
 {
@@ -52,19 +54,20 @@ final class AdminPanelProvider extends PanelProvider
             ])
             ->login()
             ->topbar(true)
-            ->favicon(asset('images/mina.ico'))
+            ->favicon(asset('public/images/mina.ico'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('16rem')
             ->maxContentWidth(Width::Full)
             ->breadcrumbs(false)
             ->databaseTransactions()
             ->defaultThemeMode(ThemeMode::Light)
-            ->colors([
-                'primary' => Color::adaptive(
-                    lightColor: FilamentColor::Blue,
-                    darkColor: FilamentColor::Sky
-                ),
-            ])
+            ->plugin(AurumTheme::make()->preset(Sapphire::class))
+            // ->colors([
+            //     'primary' => Color::adaptive(
+            //         lightColor: FilamentColor::Blue,
+            //         darkColor: FilamentColor::Sky
+            //     ),
+            // ])
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([
@@ -86,7 +89,7 @@ final class AdminPanelProvider extends PanelProvider
             ->plugins([
                 AuthDesignerPlugin::make()
                     ->login(fn ($config) => $config
-                        ->media('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFL1A6LqpIh72NKko7uheZbq_93MFCZwZSi-fh8Rc4VIAokoVcfeD_PYCTDKJTqJo-81ahmBdENRdnH0H5TncPSpfRSDsdfwa_SHsrjD3HA1Sqwny23ZS7YlfaNzkUTWQXMaXrRxQ=s1360-w1360-h1020-rw')
+                        ->media(asset('images/comp-asset.webp'))
                         ->mediaPosition(MediaPosition::Right)
                         ->mediaSize('70%')
                         //->blur(1)

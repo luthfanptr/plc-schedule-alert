@@ -10,6 +10,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -41,8 +42,9 @@ class PlcStatusesTable
                     ->selectRaw("SUM(CASE WHEN status = 'DANGER' THEN 1 ELSE 0 END) as danger_count")
                     ->groupBy('plc_id', 'plant', 'line', 'line_name');
 
+                // query filter berdasarkan Nomor SPK
                 if ($spkFilter === 'null') {
-                    $query->havingRaw('MAX(spk_status) IS NULL');
+                    $query->havingRaw("MAX(spk_number) IS NOT NULL AND TRIM(MAX(spk_number)) != '' AND MAX(spk_status) IS NULL");
                 } elseif (in_array($spkFilter, ['progress', 'done'])) {
                     $query->havingRaw('MAX(spk_status) = ?', [$spkFilter]);
                 }
@@ -145,7 +147,7 @@ class PlcStatusesTable
                         return ! $user || ! $user->hasRole(['super_admin', 'teknisi']);
                     })
                     ->placeholder('-')
-                    ->selectablePlaceholder(true)
+                    ->selectablePlaceholder(fn ($record) => empty($record?->spk_status))
                     ->searchable()
 
                     // blokir opsi di level UI sebelum user bisa klik
@@ -266,13 +268,13 @@ class PlcStatusesTable
                     ->searchable()
                     ->placeholder('-'),
                 TextColumn::make('spk_start_date')
-                    ->label('SPK Start Date')
+                    ->label('Start Date')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->placeholder('-'),
                 TextColumn::make('spk_finish_date')
-                    ->label('SPK Finish Date')
+                    ->label('Finish Date')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
@@ -308,7 +310,7 @@ class PlcStatusesTable
                         ToggleButtons::make('spk_status')
                             ->label('SPK Status')
                             ->options([
-                                'null'     => 'No Active SPK',
+                                'null'     => 'Unassigned',
                                 'progress' => 'Progress',
                                 'done'     => 'Done',
                             ])
@@ -318,9 +320,9 @@ class PlcStatusesTable
                                 'done'     => 'heroicon-o-check-circle',
                             ])
                             ->colors([
-                                'null'     => 'gray',
-                                'progress' => 'warning',
-                                'done'     => 'success',
+                                'null'     => Color::Purple,
+                                'progress' => Color::Blue,
+                                'done'     => Color::Emerald,
                             ])
                             ->nullable()
                             ->grouped(),
@@ -328,7 +330,7 @@ class PlcStatusesTable
                     ->query(fn (Builder $query, array $data): Builder => $query) // logic ada di modifyQueryUsing
                     ->indicateUsing(function (array $data): ?string {
                         $labels = [
-                            'null'     => 'No Active SPK',
+                            'null'     => 'Unassigned',
                             'progress' => 'Progress',
                             'done'     => 'Done',
                         ];
