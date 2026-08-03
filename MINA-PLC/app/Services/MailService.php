@@ -12,7 +12,9 @@ use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DangerExport;
 
 class MailService
 {
@@ -38,11 +40,19 @@ class MailService
                     continue;
                 }
 
-                // 1 email per plant
-                Mail::to($teknisiEmails)
-                    ->cc($spvEmails)
-                    ->later(now()->addSeconds(30 * $loopIndex), new DangerMail($plant));
-                    // ->queue(new DangerMail($plant));// send/queue
+                // Generate Excel Raw Data
+                $fileName = str_replace(' ', '_', trim($plant)) . "_dangerlist_" . now()->format('d-m-Y') . ".xlsx";
+                $excelData = Excel::raw(new DangerExport($plant), \Maatwebsite\Excel\Excel::XLSX);
+
+                // Kirim request ke Notification Service API
+                Http::attach(
+                    'attachment', $excelData, $fileName
+                )->post('http://127.0.0.1:8001/api/send-email', [
+                    'to' => $teknisiEmails,
+                    'cc' => $spvEmails,
+                    'subject' => "{$plant} Danger Component Maintenance Follow Up — " . now()->format('d/m/Y'),
+                    'body' => "Berikut adalah daftar komponen dengan status DANGER pada area {$plant} yang membutuhkan perhatian segera.\n\nDetail lengkap terlampir pada file Excel.",
+                ]);
 
                 // Catat log | audit trail log
                 EmailLog::create([
